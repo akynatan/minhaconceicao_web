@@ -1,3 +1,4 @@
+import { Category } from "./Category";
 export interface PlaceToSleepImage {
   id: string;
   image: string;

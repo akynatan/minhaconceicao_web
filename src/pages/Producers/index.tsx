@@ -78,33 +78,33 @@ const Producers: React.FC = () => {
   useEffect(() => {
     let filtered = producers;
 
-    // Filtro por texto
-    if (searchText) {
-      filtered = filtered.filter(
-        (producer) =>
-          producer.name.toLowerCase().includes(searchText.toLowerCase()) ||
-          (producer.description &&
-            producer.description
-              .toLowerCase()
-              .includes(searchText.toLowerCase())) ||
-          (producer.specialties &&
-            producer.specialties
-              .toLowerCase()
-              .includes(searchText.toLowerCase())) ||
-          (producer.products &&
-            producer.products
-              .toLowerCase()
-              .includes(searchText.toLowerCase())) ||
-          producer.email.toLowerCase().includes(searchText.toLowerCase()) ||
-          producer.phone.toLowerCase().includes(searchText.toLowerCase()) ||
-          (producer.address &&
-            producer.address
-              .toLowerCase()
-              .includes(searchText.toLowerCase())) ||
-          (producer.city &&
-            producer.city.toLowerCase().includes(searchText.toLowerCase()))
-      );
-    }
+    // // Filtro por texto
+    // if (searchText) {
+    //   filtered = filtered.filter(
+    //     (producer) =>
+    //       producer.name.toLowerCase().includes(searchText.toLowerCase()) ||
+    //       (producer.description &&
+    //         producer.description
+    //           .toLowerCase()
+    //           .includes(searchText.toLowerCase())) ||
+    //       (producer.specialties &&
+    //         producer.specialties
+    //           .toLowerCase()
+    //           .includes(searchText.toLowerCase())) ||
+    //       (producer.products &&
+    //         producer.products
+    //           .toLowerCase()
+    //           .includes(searchText.toLowerCase())) ||
+    //       producer.email.toLowerCase().includes(searchText.toLowerCase()) ||
+    //       producer.phone.toLowerCase().includes(searchText.toLowerCase()) ||
+    //       (producer.address &&
+    //         producer.address
+    //           .toLowerCase()
+    //           .includes(searchText.toLowerCase())) ||
+    //       (producer.city &&
+    //         producer.city.toLowerCase().includes(searchText.toLowerCase()))
+    //   );
+    // }
 
     setFilteredProducers(filtered);
   }, [producers, searchText]);

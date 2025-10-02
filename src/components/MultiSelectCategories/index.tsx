@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useField } from "@unform/core";
 import { FiChevronDown, FiX } from "react-icons/fi";
 import api from "../../services/api";
-import { Category } from "../../types/PlaceToEat";
+import { Category } from "../../types/Category";
 import { CategoryType } from "../../enums/CategoryType";
 import { useToast } from "../../hooks/toast";
 import {

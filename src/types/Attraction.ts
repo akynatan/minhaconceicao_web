@@ -1,3 +1,4 @@
+import { Category } from "./Category";
 export interface AttractionImage {
   id: string;
   image: string;

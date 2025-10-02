@@ -1,13 +1,7 @@
 import React from "react";
 import { Link } from "react-router";
 import { HiPencil } from "react-icons/hi";
-import {
-  FiPhone,
-  FiMail,
-  FiInstagram,
-  FiDollarSign,
-  FiAward,
-} from "react-icons/fi";
+import { FiPhone, FiMail, FiInstagram, FiAward } from "react-icons/fi";
 import { Guide } from "../../types/Guide";
 import {
   Card,
@@ -32,10 +26,10 @@ interface GuideCardProps {
 }
 
 const GuideCard: React.FC<GuideCardProps> = ({ guide, onToggleStatus }) => {
-  const formatPrice = (price?: number) => {
-    if (!price) return "Não informado";
-    return `R$ ${price}/hora`;
-  };
+  // const formatPrice = (price?: number) => {
+  //   if (!price) return "Não informado";
+  //   return `R$ ${price}/hora`;
+  // };
 
   const parseSpecialties = (specialties?: string) => {
     if (!specialties) return [];
@@ -100,10 +94,10 @@ const GuideCard: React.FC<GuideCardProps> = ({ guide, onToggleStatus }) => {
             </InfoItem>
           )}
 
-          <InfoItem>
+          {/* <InfoItem>
             <FiDollarSign size={16} />
             <span>Preço: {formatPrice(guide.pricePerHour)}</span>
-          </InfoItem>
+          </InfoItem> */}
         </GuideInfo>
 
         {guide.specialties &&

@@ -10,3 +10,4 @@ export * from "./Producer";
 export * from "./Company";
 export * from "./Job";
 export * from "../enums/CategoryType";
+export * from "./Attraction";

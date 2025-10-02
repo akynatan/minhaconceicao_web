@@ -15,7 +15,8 @@ import {
   NoResults,
 } from "./styles";
 import api from "../../services/api";
-import { PlaceToEat, Category } from "../../types/PlaceToEat";
+import { PlaceToEat } from "../../types/PlaceToEat";
+import { Category } from "../../types/Category";
 import { CategoryType } from "../../enums/CategoryType";
 import Button from "../../components/Button";
 import PlaceToEatCard from "../../components/PlaceToEatCard";

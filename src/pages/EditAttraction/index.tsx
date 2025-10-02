@@ -8,7 +8,6 @@ import { Attraction } from "../../types/Attraction";
 import { useToast } from "../../hooks/toast";
 
 import { Container, Content, ContentPage } from "./styles";
-import { Dificulty, DificultyText } from "../../enums/Dificulty";
 
 const EditAttraction: React.FC = () => {
   const { id } = useParams<{ id: string }>();

@@ -15,7 +15,8 @@ import {
   NoResults,
 } from "./styles";
 import api from "../../services/api";
-import { PlaceToSleep, Category } from "../../types/PlaceToSleep";
+import { PlaceToSleep } from "../../types/PlaceToSleep";
+import { Category } from "../../types/Category";
 import { CategoryType } from "../../enums/CategoryType";
 import Button from "../../components/Button";
 import PlaceToSleepCard from "../../components/PlaceToSleepCard";
@@ -119,28 +120,28 @@ const PlacesToSleep: React.FC = () => {
     [addToast]
   );
 
-  const handleDelete = useCallback(
-    async (id: string) => {
-      if (window.confirm("Tem certeza que deseja excluir este local?")) {
-        try {
-          await api.delete(`/places-to-sleep/${id}`);
-          setPlacesToSleep((prev) => prev.filter((place) => place.id !== id));
-          addToast({
-            type: "success",
-            title: "Local excluído",
-            description: "Local excluído com sucesso",
-          });
-        } catch {
-          addToast({
-            type: "error",
-            title: "Erro ao excluir",
-            description: "Erro ao excluir local",
-          });
-        }
-      }
-    },
-    [addToast]
-  );
+  // const handleDelete = useCallback(
+  //   async (id: string) => {
+  //     if (window.confirm("Tem certeza que deseja excluir este local?")) {
+  //       try {
+  //         await api.delete(`/places-to-sleep/${id}`);
+  //         setPlacesToSleep((prev) => prev.filter((place) => place.id !== id));
+  //         addToast({
+  //           type: "success",
+  //           title: "Local excluído",
+  //           description: "Local excluído com sucesso",
+  //         });
+  //       } catch {
+  //         addToast({
+  //           type: "error",
+  //           title: "Erro ao excluir",
+  //           description: "Erro ao excluir local",
+  //         });
+  //       }
+  //     }
+  //   },
+  //   [addToast]
+  // );
 
   return (
     <Container>

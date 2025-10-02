@@ -1,17 +1,9 @@
+import { Category } from "./Category";
 export interface PlaceToEatImage {
   id: string;
   image: string;
   imageUrl: string;
   placeToEatId: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export interface Category {
-  id: string;
-  name: string;
-  description?: string;
-  isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
 }

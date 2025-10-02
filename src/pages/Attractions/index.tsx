@@ -13,7 +13,8 @@ import {
   NoResults,
 } from "./styles";
 import api from "../../services/api";
-import { Attraction, Category } from "../../types/Attraction";
+import { Attraction } from "../../types/Attraction";
+import { Category } from "../../types/Category";
 import { CategoryType } from "../../enums/CategoryType";
 import Button from "../../components/Button";
 import AttractionCard from "../../components/AttractionCard";
