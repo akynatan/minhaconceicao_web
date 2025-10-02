@@ -1,1 +1,2 @@
 /api/*    http://64.227.103.13:5566/:splat    200
+/apiprivate/*    http://64.227.103.13:5566/private/:splat    200

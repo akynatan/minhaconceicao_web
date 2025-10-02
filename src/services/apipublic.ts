@@ -1,14 +1,14 @@
 import axios from "axios";
 
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "/apiprivate",
+const apipublic = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || "/api",
   validateStatus: (status: number) => {
     if (status >= 200 && status < 300) {
       return true;
     }
 
     if (status === 401 && window.location.pathname !== "/") {
-      localStorage.removeItem("@AdminBizz:token");
+      localStorage.removeItem("@MinhaConceicaoWeb:token");
       localStorage.removeItem("@AdminBizz:user");
 
       window.location.href = "";
@@ -18,13 +18,13 @@ const api = axios.create({
   },
 });
 
-api.interceptors.request.use(
+apipublic.interceptors.request.use(
   (config) => {
     if (!config.headers["Content-Type"] && !config.headers["content-type"]) {
       config.headers["Content-Type"] = "application/json";
     }
 
-    const token = localStorage.getItem("@AdminBizz:token");
+    const token = localStorage.getItem("@MinhaConceicaoWeb:token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -44,7 +44,7 @@ api.interceptors.request.use(
   }
 );
 
-api.interceptors.response.use(
+apipublic.interceptors.response.use(
   (response) => {
     console.log("API Response:", {
       status: response.status,
@@ -64,4 +64,4 @@ api.interceptors.response.use(
   }
 );
 
-export default api;
+export default apipublic;

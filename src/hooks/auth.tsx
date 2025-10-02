@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useState, useContext } from "react";
-import api from "../services/api";
+import apipublic from "../services/apipublic";
 
 export interface User {
   role: string;
@@ -31,11 +31,11 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [data, setData] = useState<AuthState>(() => {
-    const token = localStorage.getItem("@GlContractsWeb:token");
-    const user = localStorage.getItem("@GlContractsWeb:user");
+    const token = localStorage.getItem("@MinhaConceicaoWeb:token");
+    const user = localStorage.getItem("@MinhaConceicaoWeb:user");
 
     if (user && token) {
-      api.defaults.headers.authorization = `Bearer ${token}`;
+      apipublic.defaults.headers.authorization = `Bearer ${token}`;
       return { token, user: JSON.parse(user) };
     }
 
@@ -43,22 +43,22 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   });
 
   const signIn = useCallback(async ({ email, password }: SignInCredentials) => {
-    const response = await api.post("/sessions", {
+    const response = await apipublic.post("/sessions", {
       email,
       password,
     });
     const { token, user } = response.data;
-    localStorage.setItem("@GlContractsWeb:token", token);
-    localStorage.setItem("@GlContractsWeb:user", JSON.stringify(user));
+    localStorage.setItem("@MinhaConceicaoWeb:token", token);
+    localStorage.setItem("@MinhaConceicaoWeb:user", JSON.stringify(user));
 
-    api.defaults.headers.authorization = `Bearer ${token}`;
+    apipublic.defaults.headers.authorization = `Bearer ${token}`;
 
     setData({ token, user });
   }, []);
 
   const signOut = useCallback(() => {
-    localStorage.removeItem("@GlContractsWeb:token");
-    localStorage.removeItem("@GlContractsWeb:user");
+    localStorage.removeItem("@MinhaConceicaoWeb:token");
+    localStorage.removeItem("@MinhaConceicaoWeb:user");
 
     setData({} as AuthState);
   }, []);
@@ -70,7 +70,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         user,
       });
 
-      localStorage.setItem("@GlContractsWeb:user", JSON.stringify(user));
+      localStorage.setItem("@MinhaConceicaoWeb:user", JSON.stringify(user));
     },
     [data.token, setData]
   );
