@@ -1,5 +1,6 @@
 export interface PlaceToEatImage {
   id: string;
+  image: string;
   imageUrl: string;
   placeToEatId: string;
   createdAt: Date;
@@ -65,6 +66,7 @@ export interface PlaceToEat {
   averagePrice?: number;
   isActive: boolean;
   photo?: string;
+  photoUrl?: string;
   images?: PlaceToEatImage[];
   categories: PlaceToEatCategory[];
   attractions: PlaceToEatAttraction[];

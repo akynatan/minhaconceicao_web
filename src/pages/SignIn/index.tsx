@@ -25,7 +25,7 @@ const SignIn: React.FC = () => {
   const { user } = useAuth();
 
   if (user) {
-    return <Navigate to="/contratos" replace />;
+    return <Navigate to="/" replace />;
   }
 
   const formRef = useRef<FormHandles>(null);
@@ -54,7 +54,7 @@ const SignIn: React.FC = () => {
           password: data.password,
         });
 
-        navigate("/contratos");
+        navigate("/");
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);

@@ -16,6 +16,7 @@ import {
 } from "./styles";
 import api from "../../services/api";
 import { PlaceToEat, Category } from "../../types/PlaceToEat";
+import { CategoryType } from "../../enums/CategoryType";
 import Button from "../../components/Button";
 import PlaceToEatCard from "../../components/PlaceToEatCard";
 import { useToast } from "../../hooks/toast";
@@ -50,7 +51,7 @@ const PlacesToEat: React.FC = () => {
 
   const loadCategories = useCallback(() => {
     api
-      .get("/category?type=place_to_eat")
+      .get(`/category?type=${CategoryType.PLACE_TO_EAT}`)
       .then((res) => {
         setCategories(res.data);
       })
@@ -91,29 +92,34 @@ const PlacesToEat: React.FC = () => {
     setFilteredPlaces(filtered);
   }, [placesToEat, selectedCategory, searchText]);
 
-  const handleToggleStatus = async (id: string, currentStatus: boolean) => {
-    try {
-      await api.patch(`/places-to-eat/${id}/toggle-status`, {
-        isActive: !currentStatus,
-      });
+  const handleToggleStatus = useCallback(
+    async (id: string) => {
+      try {
+        const placeToEatUpdated = await api.patch(
+          `/places-to-eat/${id}/toggle-active`
+        );
 
-      addToast({
-        type: "success",
-        title: "Sucesso",
-        description: `Local ${
-          !currentStatus ? "ativado" : "desativado"
-        } com sucesso`,
-      });
+        setPlacesToEat((prev) =>
+          prev.map((place) =>
+            place.id === id ? placeToEatUpdated.data : place
+          )
+        );
 
-      loadPlacesToEat();
-    } catch (error) {
-      addToast({
-        type: "error",
-        title: "Erro",
-        description: "Erro ao alterar status do local",
-      });
-    }
-  };
+        addToast({
+          type: "success",
+          title: "Status alterado",
+          description: "Status do local alterado com sucesso",
+        });
+      } catch {
+        addToast({
+          type: "error",
+          title: "Erro ao alterar status",
+          description: "Erro ao alterar status do local",
+        });
+      }
+    },
+    [addToast]
+  );
 
   return (
     <Container>

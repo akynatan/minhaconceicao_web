@@ -3,6 +3,7 @@ import { useField } from "@unform/core";
 import { FiChevronDown, FiX } from "react-icons/fi";
 import api from "../../services/api";
 import { Category } from "../../types/PlaceToEat";
+import { CategoryType } from "../../enums/CategoryType";
 import { useToast } from "../../hooks/toast";
 import {
   Container,
@@ -18,11 +19,13 @@ import {
 interface MultiSelectCategoriesProps {
   name: string;
   placeholder?: string;
+  categoryType?: CategoryType;
 }
 
 const MultiSelectCategories: React.FC<MultiSelectCategoriesProps> = ({
   name,
   placeholder = "Selecione as categorias",
+  categoryType = CategoryType.PLACE_TO_EAT,
 }) => {
   const { fieldName, defaultValue = [], error, registerField } = useField(name);
   const { addToast } = useToast();
@@ -66,7 +69,7 @@ const MultiSelectCategories: React.FC<MultiSelectCategoriesProps> = ({
   const loadCategories = async () => {
     try {
       setLoading(true);
-      const response = await api.get("/category?type=place_to_eat");
+      const response = await api.get(`/category?type=${categoryType}`);
       setCategories(response.data);
     } catch (error) {
       addToast({

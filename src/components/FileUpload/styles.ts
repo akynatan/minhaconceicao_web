@@ -53,7 +53,6 @@ export const UploadArea = styled.div<UploadAreaProps>`
 
   svg {
     color: #666666;
-    margin-bottom: 16px;
 
     &.spinning {
       animation: ${spin} 1s linear infinite;

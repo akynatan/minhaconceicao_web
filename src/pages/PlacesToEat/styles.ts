@@ -8,7 +8,7 @@ export const Container = styled.div`
 
 export const Content = styled.main`
   width: 100%;
-  padding: 0 20px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   min-height: calc(100vh - 64px);

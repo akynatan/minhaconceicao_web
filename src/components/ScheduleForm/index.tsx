@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import {
   Container,
@@ -62,10 +62,27 @@ const ScheduleForm: React.FC<ScheduleFormProps> = ({
     return defaultSchedules;
   });
 
+  // Atualizar scheduleList quando schedules prop mudar
   useEffect(() => {
-    console.log("ScheduleForm - scheduleList updated:", scheduleList);
-    if (onChange) {
-      onChange(scheduleList);
+    if (schedules.length > 0) {
+      console.log(
+        "ScheduleForm - Updating scheduleList from props:",
+        schedules
+      );
+      setScheduleList(schedules);
+    }
+  }, [schedules]);
+
+  const prevScheduleListRef = useRef<ScheduleData[]>([]);
+  useEffect(() => {
+    if (
+      JSON.stringify(prevScheduleListRef.current) !==
+      JSON.stringify(scheduleList)
+    ) {
+      prevScheduleListRef.current = scheduleList;
+      if (onChange) {
+        onChange(scheduleList);
+      }
     }
   }, [scheduleList, onChange]);
 
@@ -74,17 +91,12 @@ const ScheduleForm: React.FC<ScheduleFormProps> = ({
     field: keyof ScheduleData,
     value: any
   ) => {
-    console.log(
-      `ScheduleForm - Updating ${field} for day ${dayOfWeek} to:`,
-      value
-    );
     const newSchedules = [...scheduleList];
     const index = newSchedules.findIndex(
       (schedule) => schedule.dayOfWeek === dayOfWeek
     );
     if (index !== -1) {
       newSchedules[index] = { ...newSchedules[index], [field]: value };
-      console.log("ScheduleForm - Updated schedule:", newSchedules[index]);
       setScheduleList(newSchedules);
     } else {
       console.log("ScheduleForm - Schedule not found for day:", dayOfWeek);

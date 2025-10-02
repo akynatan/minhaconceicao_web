@@ -1,19 +1,28 @@
 import { shade } from "polished";
 import styled from "styled-components";
 
-export const Container = styled.div``;
+export const Container = styled.div`
+  background: #ffffff;
+  min-height: 100vh;
+`;
 
 export const Content = styled.main`
-  margin: 64px auto;
-  padding: 0 20px;
+  width: 100%;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  min-height: calc(100vh - 64px);
 
   .fetching {
     text-align: center;
-    color: #ff9000;
+    color: #007bff;
+    font-size: 18px;
+    margin: 40px 0;
+  }
+
+  @media (max-width: 768px) {
+    margin-left: 0;
+    padding: 0 16px;
   }
 
   table {
@@ -35,7 +44,13 @@ export const Content = styled.main`
   }
   table thead tr {
     height: 60px;
-    background: #28262e;
+    background: #f8f9fa;
+    color: #333333;
+  }
+
+  table th {
+    color: #333333;
+    font-weight: 600;
   }
   table tbody tr {
     height: 50px;
@@ -55,14 +70,14 @@ export const Content = styled.main`
   tbody tr {
     font-family: OpenSans-Regular;
     font-size: 15px;
-    color: #808080;
+    color: #333333;
     line-height: 1.2;
     font-weight: unset;
   }
 
   tbody tr:hover {
-    color: #555555;
-    background-color: #f5f5f5;
+    color: #000000;
+    background-color: #f0f0f0;
     cursor: pointer;
   }
 
@@ -146,25 +161,22 @@ export const Content = styled.main`
       content: "Nome";
     }
     table tbody tr td:nth-child(2):before {
-      content: "Código";
+      content: "Endereço";
     }
     table tbody tr td:nth-child(3):before {
-      content: "Descrição";
+      content: "Telefone";
     }
     table tbody tr td:nth-child(4):before {
-      content: "Marca";
+      content: "Preço Médio";
     }
     table tbody tr td:nth-child(5):before {
-      content: "Modelo";
+      content: "Avaliação";
     }
     table tbody tr td:nth-child(6):before {
-      content: "Categoria";
+      content: "Status";
     }
     table tbody tr td:nth-child(7):before {
-      content: "Fabricante";
-    }
-    table tbody tr td:nth-child(8):before {
-      content: "Unidade de Medida";
+      content: "Ações";
     }
 
     table td,
@@ -185,6 +197,106 @@ export const Content = styled.main`
       font-size: 14px;
     }
   }
+`;
+
+export const FiltersContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin: 30px 0;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+`;
+
+export const SearchInput = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  svg {
+    position: absolute;
+    left: 16px;
+    color: #666666;
+    z-index: 1;
+  }
+
+  input {
+    width: 100%;
+    padding: 12px 16px 12px 48px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    background: #ffffff;
+
+    &:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+    }
+  }
+`;
+
+export const CategoriesFilter = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+`;
+
+interface CategoryButtonProps {
+  isActive: boolean;
+}
+
+export const CategoryButton = styled.button<CategoryButtonProps>`
+  padding: 8px 16px;
+  border: 1px solid ${(props) => (props.isActive ? "#007bff" : "#ddd")};
+  border-radius: 20px;
+  background: ${(props) => (props.isActive ? "#007bff" : "#ffffff")};
+  color: ${(props) => (props.isActive ? "#ffffff" : "#333333")};
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: ${(props) => (props.isActive ? "#0056b3" : "#f8f9fa")};
+    border-color: #007bff;
+  }
+`;
+
+export const CardsGrid = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-bottom: 40px;
+
+  /* Cada card terá largura mínima de 350px e crescerá para preencher o espaço */
+  > * {
+    flex: 1 1 350px;
+    min-width: 350px;
+    max-width: 450px;
+  }
+
+  @media (max-width: 768px) {
+    gap: 16px;
+
+    > * {
+      flex: 1 1 100%;
+      min-width: 100%;
+      max-width: 100%;
+    }
+  }
+`;
+
+export const NoResults = styled.div`
+  text-align: center;
+  padding: 60px 20px;
+  color: #666666;
+  font-size: 18px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
 `;
 
 export const AvatarInput = styled.div`
@@ -238,7 +350,7 @@ export const HeaderPage = styled.main`
     }
 
     h1 {
-      color: #ff9000;
+      color: #333333;
     }
   }
 
@@ -263,45 +375,4 @@ export const HeaderPage = styled.main`
       display: flex;
     }
   }
-`;
-
-export const ClientInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  margin: 24px 0;
-`;
-
-export const ContentPage = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 800px;
-`;
-
-export const SubscriptionContainer = styled.div`
-  display: flex;
-  gap: 20px;
-`;
-
-export const Subscription = styled.div`
-  flex: 1;
-`;
-
-export const ContractsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  border-radius: 10px;
-  margin-top: 20px;
-`;
-
-export const ContractContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  border: 1px solid #ff9000;
-  background-color: #28262e;
-  border-radius: 10px;
-  padding: 20px;
-  margin-top: 20px;
 `;

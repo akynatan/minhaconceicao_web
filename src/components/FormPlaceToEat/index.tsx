@@ -23,9 +23,12 @@ import { useToast } from "../../hooks/toast";
 import getValidationErrors from "../../utils/getValidationErrors";
 
 import Input from "../Input";
-import RichTextEditor from "../RichTextEditor";
+import InputMask from "../InputMask";
+import InputPhone from "../InputPhone";
+import Textarea from "../Textarea";
 import MultiSelectCategories from "../MultiSelectCategories";
 import FileUpload from "../FileUpload";
+import { CategoryType } from "../../enums/CategoryType";
 import FileUploadMultiple from "../FileUploadMultiple";
 import ScheduleForm, { ScheduleData } from "../ScheduleForm";
 
@@ -60,7 +63,7 @@ interface FormPlaceToEatData {
   facebook?: string;
   tags?: string;
   photo?: string;
-  images: string[]; // Array de keys das imagens
+  images: string[];
   schedules: ScheduleData[];
 }
 
@@ -80,10 +83,22 @@ const FormPlaceToEat: React.FC<FormPlaceToEatProps> = ({
   const navigate = useNavigate();
   const [schedules, setSchedules] = useState<ScheduleData[]>([]);
 
-  // Debug: Log quando schedules mudam
   useEffect(() => {
     console.log("FormPlaceToEat - schedules state updated:", schedules);
   }, [schedules]);
+
+  // Carregar schedules quando há dados iniciais (modo edição)
+  useEffect(() => {
+    if (initialData?.schedules) {
+      const mappedSchedules = initialData.schedules.map((schedule: any) => ({
+        dayOfWeek: schedule.dayOfWeek,
+        openingTime: schedule.openingTime || "08:00",
+        closingTime: schedule.closingTime || "18:00",
+        isClosed: schedule.isClosed || false,
+      }));
+      setSchedules(mappedSchedules);
+    }
+  }, [initialData]);
 
   const handleSubmit = useCallback(
     async (data: FormPlaceToEatData) => {
@@ -91,7 +106,6 @@ const FormPlaceToEat: React.FC<FormPlaceToEatProps> = ({
       console.log("Schedules:", schedules);
       formRef.current?.setErrors({});
       try {
-        // Combinar dados do formulário com schedules e images
         const formDataWithSchedules = {
           ...data,
           schedules: schedules,
@@ -106,16 +120,36 @@ const FormPlaceToEat: React.FC<FormPlaceToEatProps> = ({
           name: Yup.string().required("Nome obrigatório"),
           description: Yup.string().required("Descrição obrigatória"),
           address: Yup.string().required("Endereço obrigatório"),
-          city: Yup.string(),
-          neighborhood: Yup.string(),
-          number: Yup.string(),
-          zipCode: Yup.string(),
-          phone: Yup.string(),
-          email: Yup.string().email("Digite um e-mail válido"),
+          city: Yup.string().required("Cidade obrigatória"),
+          neighborhood: Yup.string().required("Bairro obrigatório"),
+          number: Yup.string().required("Número obrigatório"),
+          zipCode: Yup.string()
+            .required("CEP obrigatório")
+            .matches(/^\d{5}-\d{3}$/, "CEP deve estar no formato 00000-000"),
+          phone: Yup.string()
+            .required("Telefone obrigatório")
+            .test(
+              "is-valid-phone",
+              "Telefone deve estar no formato (00) 0000-0000 ou (00) 00000-0000",
+              (value) => {
+                if (!value) return false;
+                return /^\(\d{2}\) \d{4,5}-\d{4}$/.test(value);
+              }
+            ),
+          email: Yup.string()
+            .required("E-mail obrigatório")
+            .email("Digite um e-mail válido"),
           website: Yup.string().url("Digite uma URL válida"),
           instagram: Yup.string(),
           facebook: Yup.string(),
-          whatsapp: Yup.string(),
+          whatsapp: Yup.string().test(
+            "is-whatsapp-format",
+            "WhatsApp deve estar no formato (00) 0000-0000 ou (00) 00000-0000",
+            (value) => {
+              if (!value) return true;
+              return /^\(\d{2}\) \d{4,5}-\d{4}$/.test(value);
+            }
+          ),
           tags: Yup.string(),
           latitude: Yup.string().test(
             "is-valid-latitude",
@@ -147,7 +181,6 @@ const FormPlaceToEat: React.FC<FormPlaceToEatProps> = ({
           abortEarly: false,
         });
 
-        // Preparar dados JSON para envio
         const jsonData = {
           name: formDataWithSchedules.name,
           description: formDataWithSchedules.description,
@@ -228,9 +261,10 @@ const FormPlaceToEat: React.FC<FormPlaceToEatProps> = ({
           <StepNumber>2</StepNumber>
           <StepContent>
             <StepTitle>Descrição</StepTitle>
-            <RichTextEditor
+            <Textarea
               name="description"
               placeholder="Descreva o local, suas especialidades, ambiente..."
+              {...{ rows: 6 }}
             />
           </StepContent>
         </FormStep>
@@ -242,6 +276,7 @@ const FormPlaceToEat: React.FC<FormPlaceToEatProps> = ({
             <MultiSelectCategories
               name="categories"
               placeholder="Selecione as categorias do local"
+              categoryType={CategoryType.PLACE_TO_EAT}
             />
           </StepContent>
         </FormStep>
@@ -259,7 +294,7 @@ const FormPlaceToEat: React.FC<FormPlaceToEatProps> = ({
               <Input name="number" placeholder="Número" />
               <Input name="neighborhood" placeholder="Bairro" />
               <Input name="city" placeholder="Cidade" />
-              <Input name="zipCode" placeholder="CEP" />
+              <InputMask name="zipCode" mask="99999-999" placeholder="CEP" />
             </div>
           </StepContent>
         </FormStep>
@@ -290,20 +325,31 @@ const FormPlaceToEat: React.FC<FormPlaceToEatProps> = ({
           <StepContent>
             <StepTitle>Contato</StepTitle>
             <div className="form-grid">
-              <Input name="phone" icon={FiPhone} placeholder="Telefone" />
+              <InputPhone name="phone" icon={FiPhone} placeholder="Telefone" />
               <Input name="email" icon={FiMail} placeholder="Email" />
-              <Input
+              <InputPhone
                 name="whatsapp"
                 icon={FiMessageSquare}
                 placeholder="WhatsApp"
               />
-              <Input name="website" icon={FiGlobe} placeholder="Website" />
+              <Input
+                name="website"
+                icon={FiGlobe}
+                prefix="https://"
+                placeholder="Website"
+              />
               <Input
                 name="instagram"
                 icon={FiInstagram}
+                prefix="instagram.com/"
                 placeholder="Instagram"
               />
-              <Input name="facebook" icon={FiFacebook} placeholder="Facebook" />
+              <Input
+                name="facebook"
+                icon={FiFacebook}
+                prefix="facebook.com/"
+                placeholder="Facebook"
+              />
             </div>
           </StepContent>
         </FormStep>
@@ -329,6 +375,14 @@ const FormPlaceToEat: React.FC<FormPlaceToEatProps> = ({
               placeholder="Selecione a foto principal do local"
               accept="image/*"
               maxSize={5}
+              existingPhoto={
+                initialData?.photo && initialData?.photoUrl
+                  ? {
+                      key: initialData.photo,
+                      photoUrl: initialData.photoUrl,
+                    }
+                  : undefined
+              }
             />
           </StepContent>
         </FormStep>
@@ -354,6 +408,16 @@ const FormPlaceToEat: React.FC<FormPlaceToEatProps> = ({
               placeholder="Selecione imagens ou arraste os arquivos aqui."
               accept="image/*"
               maxSize={5}
+              existingImages={
+                initialData?.images?.map((img) => {
+                  console.log("FormPlaceToEat - Existing image:", img);
+                  return {
+                    key: img.image,
+                    imageUrl: img.imageUrl,
+                    name: img.image,
+                  };
+                }) || []
+              }
             />
           </StepContent>
         </FormStep>

@@ -15,7 +15,9 @@ const ProtectedRoute = ({ user, children }: ProtectedRouteProps) => {
   return (
     <div style={{ display: "flex", flexDirection: "row" }}>
       <MenuHeader />
-      <div style={{ marginLeft: "150px" }}>{children}</div>
+      <div style={{ marginLeft: "280px", width: "calc(100% - 280px)" }}>
+        {children}
+      </div>
     </div>
   );
 };

@@ -20,7 +20,26 @@ const EditPlaceToEat: React.FC = () => {
       api
         .get(`/places-to-eat/${id}`)
         .then((response) => {
-          setPlaceToEat(response.data);
+          const placeToEatData = response.data;
+
+          const mappedData = {
+            ...placeToEatData,
+            latitude: placeToEatData.latitude || "",
+            longitude: placeToEatData.longitude || "",
+            categories:
+              placeToEatData.categories?.map((cat: any) => cat.categoryId) ||
+              [],
+            images: placeToEatData.images || [],
+            schedules:
+              placeToEatData.schedules?.map((schedule: any) => ({
+                dayOfWeek: schedule.dayOfWeek,
+                openingTime: schedule.openingTime?.substring(0, 5) || "08:00",
+                closingTime: schedule.closingTime?.substring(0, 5) || "18:00",
+                isClosed: schedule.isClosed || false,
+              })) || [],
+          };
+
+          setPlaceToEat(mappedData);
         })
         .catch(() => {
           addToast({

@@ -11,8 +11,20 @@ const Dashboard: React.FC = () => {
           <Link to="/clientes">
             <MenuItem>Clientes</MenuItem>
           </Link>
-          <Link to="/contratos">
+          <Link to="/">
             <MenuItem>Contratos</MenuItem>
+          </Link>
+          <Link to="/lugares-para-comer">
+            <MenuItem>Lugares para Comer</MenuItem>
+          </Link>
+          <Link to="/lugares-para-dormir">
+            <MenuItem>Lugares para Dormir</MenuItem>
+          </Link>
+          <Link to="/atracoes">
+            <MenuItem>Atrações Turísticas</MenuItem>
+          </Link>
+          <Link to="/guias">
+            <MenuItem>Guias</MenuItem>
           </Link>
         </Menu>
       </Content>

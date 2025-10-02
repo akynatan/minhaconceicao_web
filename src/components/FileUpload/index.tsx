@@ -6,9 +6,6 @@ import {
   Container,
   UploadArea,
   UploadButton,
-  FileList,
-  FileItem,
-  FileInfo,
   RemoveButton,
   UploadText,
   UploadHint,
@@ -20,15 +17,21 @@ interface FileUploadProps {
   placeholder?: string;
   accept?: string;
   maxSize?: number; // em MB
-  onUploadSuccess?: (fileData: { key: string; name: string }) => void;
+  existingPhoto?: { key: string; photoUrl: string }; // Foto existente para edição
+  onUploadSuccess?: (fileData: {
+    key: string;
+    name: string;
+    imageUrl: string;
+  }) => void;
   onUploadError?: (error: string) => void;
 }
 
 interface UploadedFileData {
   key: string;
   name: string;
-  file: File;
+  file?: File;
   preview?: string;
+  photoUrl?: string; // URL da foto existente (para edição)
 }
 
 const FileUpload: React.FC<FileUploadProps> = ({
@@ -36,6 +39,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
   placeholder = "Selecione um arquivo ou arraste o arquivo aqui.",
   accept = "image/*",
   maxSize = 5, // 5MB default
+  existingPhoto,
   onUploadSuccess,
   onUploadError,
 }) => {
@@ -54,30 +58,39 @@ const FileUpload: React.FC<FileUploadProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Carrega foto existente quando o componente é montado
+  React.useEffect(() => {
+    if (existingPhoto) {
+      const existingFileData: UploadedFileData = {
+        key: existingPhoto.key,
+        name: "Foto existente",
+        photoUrl: existingPhoto.photoUrl,
+      };
+      setUploadedFile(existingFileData);
+    } else {
+      setUploadedFile(null);
+    }
+  }, [existingPhoto]);
+
   React.useEffect(() => {
     registerField({
       name: fieldName,
       ref: containerRef.current,
-      getValue: () => uploadedFile?.key || "",
+      getValue: () => {
+        return uploadedFile?.key || "";
+      },
       setValue: (_, value) => {
-        if (value) {
-          // Se for uma string (key), mantém apenas a key
-          if (typeof value === "string") {
-            setUploadedFile((prev) => (prev ? { ...prev, key: value } : null));
-          }
+        if (value && typeof value === "string") {
+          setUploadedFile((prev) =>
+            prev ? { ...prev, key: value } : { key: value, name: "Arquivo" }
+          );
         }
       },
-      clearValue: () => setUploadedFile(null),
+      clearValue: () => {
+        setUploadedFile(null);
+      },
     });
-  }, [fieldName, registerField, uploadedFile]);
-
-  const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return "0 Bytes";
-    const k = 1024;
-    const sizes = ["Bytes", "KB", "MB", "GB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
-  };
+  }, [fieldName, registerField]);
 
   const validateFile = (file: File) => {
     if (file.size > maxSize * 1024 * 1024) {
@@ -104,7 +117,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
         },
       });
 
-      const { key, fileName } = response.data;
+      const { key, fileName, imageUrl } = response.data;
 
       const uploadedFileData: UploadedFileData = {
         key,
@@ -118,7 +131,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
       setUploadedFile(uploadedFileData);
 
       if (onUploadSuccess) {
-        onUploadSuccess({ key, name });
+        onUploadSuccess({ key, name, imageUrl });
       }
     } catch (error: any) {
       const errorMessage =
@@ -138,7 +151,6 @@ const FileUpload: React.FC<FileUploadProps> = ({
     async (fileList: FileList) => {
       if (fileList.length === 0) return;
 
-      // Pega apenas o primeiro arquivo (upload único)
       const file = fileList[0];
       const validationError = validateFile(file);
 
@@ -151,7 +163,6 @@ const FileUpload: React.FC<FileUploadProps> = ({
         return;
       }
 
-      // Faz o upload imediatamente
       await uploadFile(file);
     },
     [maxSize, accept, onUploadError]
@@ -211,11 +222,75 @@ const FileUpload: React.FC<FileUploadProps> = ({
             <UploadText>Fazendo upload...</UploadText>
           </>
         ) : uploadedFile ? (
-          <>
-            <FiFile size={32} />
-            <UploadText>Arquivo enviado com sucesso!</UploadText>
-            <UploadHint>{uploadedFile.name}</UploadHint>
-          </>
+          <div
+            style={{
+              position: "relative",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            {uploadedFile.photoUrl ? (
+              <img
+                src={uploadedFile.photoUrl}
+                alt="Foto existente"
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: 200,
+                  objectFit: "contain",
+                  borderRadius: 8,
+                }}
+              />
+            ) : uploadedFile.preview ? (
+              <img
+                src={uploadedFile.preview}
+                alt="Preview"
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: 200,
+                  objectFit: "contain",
+                  borderRadius: 8,
+                }}
+              />
+            ) : (
+              <FiFile size={64} />
+            )}
+            <RemoveButton
+              type="button"
+              onClick={removeFile}
+              title="Remover arquivo"
+              style={{
+                position: "absolute",
+                top: 12,
+                right: 12,
+                background: "rgba(255, 255, 255, 0.95)",
+                color: "#e53e3e",
+                border: "2px solid #e53e3e",
+                borderRadius: "50%",
+                width: 36,
+                height: 36,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)",
+                transition: "all 0.2s ease",
+                zIndex: 10,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "#e53e3e";
+                e.currentTarget.style.color = "white";
+                e.currentTarget.style.transform = "scale(1.1)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "rgba(255, 255, 255, 0.95)";
+                e.currentTarget.style.color = "#e53e3e";
+                e.currentTarget.style.transform = "scale(1)";
+              }}
+            >
+              <FiX size={18} />
+            </RemoveButton>
+          </div>
         ) : (
           <>
             <FiUpload size={32} />
@@ -239,33 +314,6 @@ const FileUpload: React.FC<FileUploadProps> = ({
         style={{ display: "none" }}
         disabled={isUploading || !!uploadedFile}
       />
-
-      {uploadedFile && (
-        <FileList>
-          <FileItem>
-            {uploadedFile.preview ? (
-              <img src={uploadedFile.preview} alt="Preview" />
-            ) : (
-              <FiFile size={24} />
-            )}
-
-            <FileInfo>
-              <span className="name">{uploadedFile.name}</span>
-              <span className="size">
-                {formatFileSize(uploadedFile.file.size)}
-              </span>
-            </FileInfo>
-
-            <RemoveButton
-              type="button"
-              onClick={removeFile}
-              title="Remover arquivo"
-            >
-              <FiX size={16} />
-            </RemoveButton>
-          </FileItem>
-        </FileList>
-      )}
 
       {error && <ErrorMessage>{error}</ErrorMessage>}
     </Container>

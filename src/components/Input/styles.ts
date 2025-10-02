@@ -67,6 +67,14 @@ export const Container = styled.div<ContainerProps>`
     flex-shrink: 0;
   }
 
+  .prefix {
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 400;
+    margin-right: 8px;
+    flex-shrink: 0;
+  }
+
   & + div {
     margin-top: 12px;
   }

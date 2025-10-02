@@ -9,15 +9,16 @@ interface FileUploadMultipleProps {
   placeholder?: string;
   accept?: string;
   maxSize?: number; // em MB
+  existingImages?: Array<{ key: string; imageUrl: string; name?: string }>; // Imagens existentes para edição
   onUploadSuccess?: (fileData: { key: string; name: string }) => void;
   onUploadError?: (error: string) => void;
 }
 
 interface FileData {
-  key: string;
+  key: string; // Usar a key como identificador único
   name: string;
-  file: File;
-  preview?: string;
+  file?: File;
+  imageUrl?: string; // URL da imagem (retornada pelo backend ou existente)
   isUploading?: boolean;
 }
 
@@ -26,6 +27,7 @@ const FileUploadMultiple: React.FC<FileUploadMultipleProps> = ({
   placeholder = "Selecione arquivos ou arraste os arquivos aqui.",
   accept = "image/*",
   maxSize = 5, // 5MB default
+  existingImages = [],
   onUploadSuccess,
   onUploadError,
 }) => {
@@ -36,6 +38,19 @@ const FileUploadMultiple: React.FC<FileUploadMultipleProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Carrega imagens existentes quando o componente é montado
+  React.useEffect(() => {
+    if (existingImages.length > 0) {
+      const existingFiles: FileData[] = existingImages.map((img) => ({
+        key: img.key,
+        name: img.name || img.key,
+        imageUrl: img.imageUrl,
+        isUploading: false,
+      }));
+      setFiles(existingFiles);
+    }
+  }, [existingImages]);
+
   React.useEffect(() => {
     registerField({
       name: fieldName,
@@ -44,24 +59,18 @@ const FileUploadMultiple: React.FC<FileUploadMultipleProps> = ({
         const validKeys = files
           .filter((f) => f.key && f.key.trim() !== "" && !f.isUploading)
           .map((f) => f.key);
-        console.log("FileUploadMultiple - Valid keys:", validKeys);
-        console.log("FileUploadMultiple - All files:", files);
         return validKeys;
       },
       setValue: (_, value) => {
         if (value && Array.isArray(value)) {
-          // Se for array de strings (keys), mantém apenas as keys
           if (typeof value[0] === "string") {
             setFiles((prev) => prev.filter((f) => value.includes(f.key)));
           } else {
-            // Se for array de File objects, converte para FileData
             const fileData = value.map((file: any) => ({
-              key: "",
+              key: `temp-${Date.now()}-${Math.random()}`,
               name: file.name,
               file,
-              preview: file.type.startsWith("image/")
-                ? URL.createObjectURL(file)
-                : undefined,
+              imageUrl: file.imageUrl,
             }));
             setFiles(fileData);
           }
@@ -91,45 +100,77 @@ const FileUploadMultiple: React.FC<FileUploadMultipleProps> = ({
     return null;
   };
 
-  const uploadFile = async (file: File, tempIndex: number) => {
+  const uploadFile = async (file: File, tempKey: string) => {
+    console.log(
+      `FileUploadMultiple - Starting upload for file: ${file.name} with temp key: ${tempKey}`
+    );
+
     try {
       const formData = new FormData();
       formData.append("file", file);
 
+      console.log(`FileUploadMultiple - Uploading file: ${file.name}`);
       const response = await api.post("/file/upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
 
-      const { key, fileName } = response.data;
+      const { key, fileName, imageUrl } = response.data;
+      console.log(
+        `FileUploadMultiple - Upload successful for: ${file.name}, key: ${key}, imageUrl: ${imageUrl}`
+      );
 
       const uploadedFileData: FileData = {
         key,
         name: fileName,
         file,
-        preview: file.type.startsWith("image/")
-          ? URL.createObjectURL(file)
-          : undefined,
+        imageUrl: imageUrl, // Usar imageUrl do backend como preview
         isUploading: false,
       };
 
-      // Substitui o arquivo temporário pelo arquivo com key
       setFiles((prev) => {
-        const newFiles = [...prev];
-        newFiles[tempIndex] = uploadedFileData;
-        return newFiles;
+        console.log(
+          `FileUploadMultiple - Updating file with temp key ${tempKey}`
+        );
+
+        // Encontrar e substituir o arquivo pela key temporária
+        const updatedFiles = prev.map((file) => {
+          if (file.key === tempKey) {
+            console.log(`FileUploadMultiple - File updated successfully`);
+            return uploadedFileData;
+          }
+          return file;
+        });
+
+        // Se não encontrou, adicionar no final (fallback)
+        if (!prev.some((f) => f.key === tempKey)) {
+          console.error(
+            `FileUploadMultiple - Could not find file with temp key ${tempKey}, adding to end`
+          );
+          updatedFiles.push(uploadedFileData);
+        }
+
+        return updatedFiles;
       });
 
       if (onUploadSuccess) {
-        onUploadSuccess({ key, name });
+        onUploadSuccess({ key, name: fileName });
       }
     } catch (error: any) {
+      console.error(
+        `FileUploadMultiple - Upload error for file: ${file.name}`,
+        error
+      );
       const errorMessage =
         error.response?.data?.message || "Erro ao fazer upload do arquivo";
 
-      // Remove o arquivo que falhou no upload
-      setFiles((prev) => prev.filter((_, index) => index !== tempIndex));
+      setFiles((prev) => {
+        console.log(
+          `FileUploadMultiple - Removing failed upload with temp key: ${tempKey}`
+        );
+        return prev.filter((f) => f.key !== tempKey);
+      });
 
       if (onUploadError) {
         onUploadError(errorMessage);
@@ -141,12 +182,23 @@ const FileUploadMultiple: React.FC<FileUploadMultipleProps> = ({
 
   const handleFileSelect = useCallback(
     async (fileList: FileList) => {
+      console.log(
+        "FileUploadMultiple - handleFileSelect called with",
+        fileList.length,
+        "files"
+      );
+
       if (fileList.length === 0) return;
 
       const errors: string[] = [];
       const validFiles: File[] = [];
 
       const fileArray = Array.from(fileList) as File[];
+      console.log(
+        "FileUploadMultiple - Processing files:",
+        fileArray.map((f) => f.name)
+      );
+
       fileArray.forEach((file: File) => {
         const validationError = validateFile(file);
 
@@ -158,26 +210,43 @@ const FileUploadMultiple: React.FC<FileUploadMultipleProps> = ({
       });
 
       if (errors.length > 0) {
+        console.error("FileUploadMultiple - Validation errors:", errors);
         alert(errors.join("\n"));
       }
 
-      // Adiciona arquivos como "uploading" primeiro
-      const uploadingFiles: FileData[] = validFiles.map((file) => ({
-        key: "",
+      console.log("FileUploadMultiple - Valid files:", validFiles.length);
+
+      const uploadingFiles: FileData[] = validFiles.map((file, index) => ({
+        key: `temp-${Date.now()}-${index}`, // Key temporária para identificar durante upload
         name: file.name,
         file,
-        preview: file.type.startsWith("image/")
-          ? URL.createObjectURL(file)
+        imageUrl: file.type.startsWith("image/")
+          ? URL.createObjectURL(file) // Preview temporário do arquivo local
           : undefined,
         isUploading: true,
       }));
 
-      const currentLength = files.length;
-      setFiles((prev) => [...prev, ...uploadingFiles]);
+      // Adicionar arquivos em estado de upload
+      setFiles((prev) => {
+        console.log("FileUploadMultiple - Current files length:", prev.length);
+        console.log(
+          "FileUploadMultiple - Adding uploading files:",
+          uploadingFiles.length
+        );
 
-      // Faz upload de cada arquivo
+        const newFiles = [...prev, ...uploadingFiles];
+        console.log("FileUploadMultiple - New files state:", newFiles.length);
+
+        return newFiles;
+      });
+
+      // Fazer uploads sequenciais para evitar problemas de concorrência
       for (let i = 0; i < validFiles.length; i++) {
-        await uploadFile(validFiles[i], currentLength + i);
+        console.log(
+          `FileUploadMultiple - Uploading file ${i + 1}/${validFiles.length}:`,
+          validFiles[i].name
+        );
+        await uploadFile(validFiles[i], uploadingFiles[i].key);
       }
     },
     [maxSize, accept, onUploadSuccess, onUploadError]
@@ -188,7 +257,7 @@ const FileUploadMultiple: React.FC<FileUploadMultipleProps> = ({
     if (fileList && fileList.length > 0) {
       handleFileSelect(fileList);
     }
-    // Limpa o input para permitir selecionar o mesmo arquivo novamente
+
     if (inputRef.current) {
       inputRef.current.value = "";
     }
@@ -214,12 +283,13 @@ const FileUploadMultiple: React.FC<FileUploadMultipleProps> = ({
     setDragOver(false);
   };
 
-  const removeFile = (index: number) => {
-    const fileToRemove = files[index];
-    if (fileToRemove?.preview) {
-      URL.revokeObjectURL(fileToRemove.preview);
+  const removeFile = (fileKey: string) => {
+    const fileToRemove = files.find((f) => f.key === fileKey);
+    // Revogar URL do preview temporário se existir
+    if (fileToRemove?.imageUrl && fileToRemove.imageUrl.startsWith("blob:")) {
+      URL.revokeObjectURL(fileToRemove.imageUrl);
     }
-    setFiles((prev) => prev.filter((_, i) => i !== index));
+    setFiles((prev) => prev.filter((f) => f.key !== fileKey));
   };
 
   const isUploading = files.some((file) => file.isUploading);
@@ -269,10 +339,13 @@ const FileUploadMultiple: React.FC<FileUploadMultipleProps> = ({
 
       {files.length > 0 && (
         <S.FileList>
-          {files.map((fileData, index) => (
-            <S.FileItem key={index}>
-              {fileData.preview ? (
-                <img src={fileData.preview} alt="Preview" />
+          {files.map((fileData) => (
+            <S.FileItem key={fileData.key}>
+              {fileData.imageUrl ? (
+                <img
+                  src={fileData.imageUrl}
+                  alt={fileData.isUploading ? "Preview" : "Imagem"}
+                />
               ) : (
                 <FiFile size={24} />
               )}
@@ -282,14 +355,19 @@ const FileUploadMultiple: React.FC<FileUploadMultipleProps> = ({
                 <span className="size">
                   {fileData.isUploading
                     ? "Fazendo upload..."
-                    : formatFileSize(fileData.file.size)}
+                    : fileData?.file?.size
+                    ? formatFileSize(fileData?.file?.size)
+                    : fileData.imageUrl &&
+                      !fileData.imageUrl.startsWith("blob:")
+                    ? "Imagem existente"
+                    : "0 Bytes"}
                 </span>
               </S.FileInfo>
 
               {!fileData.isUploading && (
                 <S.RemoveButton
                   type="button"
-                  onClick={() => removeFile(index)}
+                  onClick={() => removeFile(fileData.key)}
                   title="Remover arquivo"
                 >
                   <FiX size={16} />

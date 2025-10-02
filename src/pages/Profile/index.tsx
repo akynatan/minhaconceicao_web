@@ -90,7 +90,7 @@ const Profile: React.FC = () => {
           });
         }
 
-        navigate("/contratos");
+        navigate("/");
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);

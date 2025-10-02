@@ -20,7 +20,7 @@ import {
 
 interface PlaceToEatCardProps {
   place: PlaceToEat;
-  onToggleStatus: (id: string, currentStatus: boolean) => void;
+  onToggleStatus: (id: string) => void;
 }
 
 const PlaceToEatCard: React.FC<PlaceToEatCardProps> = ({
@@ -103,7 +103,7 @@ const PlaceToEatCard: React.FC<PlaceToEatCardProps> = ({
             <input
               type="checkbox"
               checked={place.isActive}
-              onChange={() => onToggleStatus(place.id, place.isActive)}
+              onChange={() => onToggleStatus(place.id)}
             />
             <span className="slider"></span>
           </label>

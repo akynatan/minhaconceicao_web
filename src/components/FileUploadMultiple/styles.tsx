@@ -38,7 +38,6 @@ export const UploadArea = styled.div<{ isDragOver?: boolean }>`
 
   svg {
     color: #6c757d;
-    margin-bottom: 16px;
   }
 `;
 

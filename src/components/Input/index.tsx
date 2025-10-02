@@ -15,12 +15,14 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   name: string;
   containerStyle?: object;
   icon?: React.ComponentType<IconBaseProps>;
+  prefix?: string;
 }
 
 const Input: React.FC<InputProps> = ({
   name,
   containerStyle = {},
   icon: Icon,
+  prefix,
   ...rest
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -54,6 +56,7 @@ const Input: React.FC<InputProps> = ({
       data-testid="input-container"
     >
       {Icon && <Icon size={20} />}
+      {prefix && <span className="prefix">{prefix}</span>}
       <input
         defaultValue={defaultValue}
         ref={inputRef}
