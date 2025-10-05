@@ -1,15 +1,19 @@
 import axios from "axios";
 
+const baseURL = import.meta.env.VITE_API_URL
+  ? import.meta.env.VITE_API_URL + "/private"
+  : "/apiprivate";
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL + "/private" || "/apiprivate",
+  baseURL: baseURL,
   validateStatus: (status: number) => {
     if (status >= 200 && status < 300) {
       return true;
     }
 
     if (status === 401 && window.location.pathname !== "/") {
-      localStorage.removeItem("@AdminBizz:token");
-      localStorage.removeItem("@AdminBizz:user");
+      localStorage.removeItem("@MinhaConceicaoWeb:token");
+      localStorage.removeItem("@MinhaConceicaoWeb:user");
 
       window.location.href = "";
     }
