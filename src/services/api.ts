@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "/apiprivate",
+  baseURL: import.meta.env.VITE_API_URL + "/private" || "/apiprivate",
   validateStatus: (status: number) => {
     if (status >= 200 && status < 300) {
       return true;
@@ -24,7 +24,7 @@ api.interceptors.request.use(
       config.headers["Content-Type"] = "application/json";
     }
 
-    const token = localStorage.getItem("@AdminBizz:token");
+    const token = localStorage.getItem("@MinhaConceicaoWeb:token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

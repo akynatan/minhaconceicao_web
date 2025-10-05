@@ -43,7 +43,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   });
 
   const signIn = useCallback(async ({ email, password }: SignInCredentials) => {
-    const response = await apipublic.post("/sessions", {
+    const response = await apipublic.post("/sessions/admin", {
       email,
       password,
     });
