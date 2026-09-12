@@ -8,7 +8,14 @@ import React, {
 import { IconBaseProps } from "react-icons";
 import { FiAlertCircle } from "react-icons/fi";
 import { useField } from "@unform/core";
-import InputMask from "react-input-mask";
+import ReactInputMask from "react-input-mask";
+
+const InputMask = ReactInputMask as unknown as React.FC<
+  React.InputHTMLAttributes<HTMLInputElement> & {
+    mask: string;
+    ref?: React.Ref<unknown>;
+  }
+>;
 
 import { Container, Error } from "../Input/styles";
 

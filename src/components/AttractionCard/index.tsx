@@ -13,8 +13,6 @@ import {
   AttractionInfo,
   InfoItem,
   CategoryInfo,
-  Tags,
-  Tag,
   StatusSwitch,
   EditButton,
   StatusIndicator,
@@ -58,14 +56,6 @@ const AttractionCard: React.FC<AttractionCardProps> = ({
       default:
         return difficulty;
     }
-  };
-
-  const parseTags = (tags?: string) => {
-    if (!tags) return [];
-    return tags
-      .split(",")
-      .map((tag) => tag.trim())
-      .filter((tag) => tag.length > 0);
   };
 
   return (
@@ -112,14 +102,6 @@ const AttractionCard: React.FC<AttractionCardProps> = ({
             <span>{attraction.category.name}</span>
           </CategoryInfo>
         )}
-
-        {/* {attraction.tags && parseTags(attraction.tags).length > 0 && (
-          // <Tags>
-          //   {attraction.tags.map((tag, index) => (
-          //     <Tag key={index}>{tag}</Tag>
-          //   ))}
-          // </Tags>
-        )} */}
 
         {attraction.description && (
           <div

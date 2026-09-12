@@ -126,10 +126,10 @@ const FormJob: React.FC<FormJobProps> = ({ initialData, method }) => {
               originalValue === "" ? null : value
             )
             .notRequired()
-            .when("salaryMin", (salaryMin, schema) =>
+            .when("salaryMin", ([salaryMin], schema) =>
               salaryMin != null
                 ? schema.min(
-                    salaryMin as number,
+                    Number(salaryMin),
                     "Salário máximo deve ser maior ou igual ao mínimo"
                   )
                 : schema
