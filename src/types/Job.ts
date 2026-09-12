@@ -1,10 +1,12 @@
 import { Company } from "./Company";
+import { Category } from "./Category";
 
 export enum ContractType {
   CLT = "CLT",
   PJ = "PJ",
   INTERNSHIP = "INTERNSHIP",
   TEMPORARY = "TEMPORARY",
+  FREELANCER = "FREELANCER",
 }
 
 export enum WorkModel {
@@ -19,6 +21,13 @@ export enum WorkSchedule {
   FLEXIBLE = "FLEXIBLE",
 }
 
+export enum SalaryPeriod {
+  MONTH = "MONTH",
+  YEAR = "YEAR",
+  DAY = "DAY",
+  HOUR = "HOUR",
+}
+
 export interface Job {
   id: string;
   title: string;
@@ -28,9 +37,12 @@ export interface Job {
   contractType: ContractType;
   workModel: WorkModel;
   workSchedule: WorkSchedule;
-  salary?: number;
+  salaryMin?: number;
+  salaryMax?: number;
+  salaryPeriod?: SalaryPeriod;
   location: string;
-  area: string;
+  categoryId: string;
+  category?: Category;
   companyId: string;
   company: Company;
   isActive: boolean;
@@ -52,9 +64,11 @@ export interface CreateJobData {
   contractType: ContractType;
   workModel: WorkModel;
   workSchedule: WorkSchedule;
-  salary?: number;
+  salaryMin?: number;
+  salaryMax?: number;
+  salaryPeriod?: SalaryPeriod;
   location: string;
-  area: string;
+  categoryId: string;
   companyId: string;
   publicationDate: string;
   expirationDate?: string;
@@ -72,9 +86,11 @@ export interface UpdateJobData {
   contractType?: ContractType;
   workModel?: WorkModel;
   workSchedule?: WorkSchedule;
-  salary?: number;
+  salaryMin?: number;
+  salaryMax?: number;
+  salaryPeriod?: SalaryPeriod;
   location?: string;
-  area?: string;
+  categoryId?: string;
   companyId?: string;
   isActive?: boolean;
   publicationDate?: string;
@@ -96,7 +112,7 @@ export interface JobListResponse {
 export interface JobListFilters {
   title?: string;
   location?: string;
-  area?: string;
+  categoryId?: string;
   contractType?: ContractType;
   workModel?: WorkModel;
   workSchedule?: WorkSchedule;
@@ -107,3 +123,52 @@ export interface JobListFilters {
   page?: number;
   limit?: number;
 }
+
+export const SALARY_PERIOD_OPTIONS = [
+  { value: SalaryPeriod.MONTH, label: "Por mês" },
+  { value: SalaryPeriod.YEAR, label: "Por ano" },
+  { value: SalaryPeriod.DAY, label: "Por dia" },
+  { value: SalaryPeriod.HOUR, label: "Por hora" },
+];
+
+const formatCurrency = (value: number): string =>
+  new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+    minimumFractionDigits: 2,
+  }).format(value);
+
+const getSalaryPeriodText = (period: SalaryPeriod): string => {
+  const labels: Record<SalaryPeriod, string> = {
+    [SalaryPeriod.MONTH]: "/mês",
+    [SalaryPeriod.YEAR]: "/ano",
+    [SalaryPeriod.DAY]: "/dia",
+    [SalaryPeriod.HOUR]: "/hora",
+  };
+
+  return labels[period];
+};
+
+export const formatJobSalary = (job: {
+  salaryMin?: number;
+  salaryMax?: number;
+  salaryPeriod?: SalaryPeriod;
+}): string => {
+  const min = job.salaryMin != null ? Number(job.salaryMin) : undefined;
+  const max = job.salaryMax != null ? Number(job.salaryMax) : undefined;
+
+  if (min == null && max == null) {
+    return "A combinar";
+  }
+
+  const periodText = job.salaryPeriod
+    ? getSalaryPeriodText(job.salaryPeriod)
+    : getSalaryPeriodText(SalaryPeriod.MONTH);
+
+  if (min != null && max != null && min !== max) {
+    return `${formatCurrency(min)} - ${formatCurrency(max)} ${periodText}`;
+  }
+
+  const value = min ?? max!;
+  return `${formatCurrency(value)} ${periodText}`;
+};

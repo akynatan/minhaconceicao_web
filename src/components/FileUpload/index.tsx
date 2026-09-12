@@ -76,9 +76,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
     registerField({
       name: fieldName,
       ref: containerRef.current,
-      getValue: () => {
-        return uploadedFile?.key || "";
-      },
+      getValue: () => uploadedFile?.key,
       setValue: (_, value) => {
         if (value && typeof value === "string") {
           setUploadedFile((prev) =>
@@ -90,7 +88,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
         setUploadedFile(null);
       },
     });
-  }, [fieldName, registerField]);
+  }, [fieldName, registerField, uploadedFile]);
 
   const validateFile = (file: File) => {
     if (file.size > maxSize * 1024 * 1024) {

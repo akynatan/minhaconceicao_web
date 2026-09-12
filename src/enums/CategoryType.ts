@@ -6,4 +6,5 @@ export enum CategoryType {
   PLACE_TO_SLEEP = "place_to_sleep",
   PUBLIC_SERVICES = "public_services",
   SERVICES = "services",
+  JOBS = "jobs",
 }

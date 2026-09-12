@@ -43,11 +43,14 @@ interface FormAttractionData {
   difficulty: "easy" | "medium" | "hard";
   estimatedTime: number;
   distance: number;
+  latitude?: string;
+  longitude?: string;
   howToArrive: string;
   elevationGain?: number;
   tags?: string;
   categoryId: string;
   photo?: string;
+  stampImage?: string | null;
   images: string[];
   schedules: ScheduleData[];
 }
@@ -102,6 +105,24 @@ const FormAttraction: React.FC<FormAttractionProps> = ({
           distance: Yup.number()
             .positive("Distância deve ser positiva")
             .required("Distância obrigatória"),
+          latitude: Yup.string().test(
+            "is-valid-latitude",
+            "Latitude inválida",
+            (value) => {
+              if (!value) return true;
+              const num = Number(value);
+              return !Number.isNaN(num) && num >= -90 && num <= 90;
+            }
+          ),
+          longitude: Yup.string().test(
+            "is-valid-longitude",
+            "Longitude inválida",
+            (value) => {
+              if (!value) return true;
+              const num = Number(value);
+              return !Number.isNaN(num) && num >= -180 && num <= 180;
+            }
+          ),
           howToArrive: Yup.string().required("Como chegar obrigatório"),
           elevationGain: Yup.number()
             .positive("Elevação deve ser positiva")
@@ -109,6 +130,7 @@ const FormAttraction: React.FC<FormAttractionProps> = ({
           tags: Yup.string(),
           categoryId: Yup.string().required("Categoria obrigatória"),
           photo: Yup.string(),
+          stampImage: Yup.string().nullable(),
           images: Yup.array(),
           schedules: Yup.array(),
         });
@@ -123,11 +145,21 @@ const FormAttraction: React.FC<FormAttractionProps> = ({
           difficulty: formDataWithSchedules.difficulty,
           estimatedTime: formDataWithSchedules.estimatedTime,
           distance: formDataWithSchedules.distance,
+          latitude: formDataWithSchedules.latitude
+            ? Number(formDataWithSchedules.latitude)
+            : undefined,
+          longitude: formDataWithSchedules.longitude
+            ? Number(formDataWithSchedules.longitude)
+            : undefined,
           howToArrive: formDataWithSchedules.howToArrive,
           elevationGain: formDataWithSchedules.elevationGain,
           tags: formDataWithSchedules.tags,
           categoryId: formDataWithSchedules.categoryId,
           photo: formDataWithSchedules.photo,
+          stampImage:
+            method === "edit"
+              ? formDataWithSchedules.stampImage ?? null
+              : formDataWithSchedules.stampImage,
           images: formDataWithSchedules.images,
           schedules: formDataWithSchedules.schedules,
         };
@@ -265,7 +297,28 @@ const FormAttraction: React.FC<FormAttractionProps> = ({
         </FormStep>
 
         <FormStep>
-          <StepNumber>4</StepNumber>
+          <StepNumber>5</StepNumber>
+          <StepContent>
+            <StepTitle>Localização</StepTitle>
+            <div className="form-flex">
+              <Input
+                name="latitude"
+                type="number"
+                step="any"
+                placeholder="Latitude (-90 a 90)"
+              />
+              <Input
+                name="longitude"
+                type="number"
+                step="any"
+                placeholder="Longitude (-180 a 180)"
+              />
+            </div>
+          </StepContent>
+        </FormStep>
+
+        <FormStep>
+          <StepNumber>6</StepNumber>
           <StepContent>
             <StepTitle>Como Chegar</StepTitle>
             <Textarea
@@ -277,7 +330,7 @@ const FormAttraction: React.FC<FormAttractionProps> = ({
         </FormStep>
 
         <FormStep>
-          <StepNumber>5</StepNumber>
+          <StepNumber>7</StepNumber>
           <StepContent>
             <StepTitle>Tags</StepTitle>
             <Input
@@ -289,7 +342,7 @@ const FormAttraction: React.FC<FormAttractionProps> = ({
         </FormStep>
 
         <FormStep>
-          <StepNumber>6</StepNumber>
+          <StepNumber>8</StepNumber>
           <StepContent>
             <StepTitle>Foto Principal</StepTitle>
             <FileUpload
@@ -310,7 +363,28 @@ const FormAttraction: React.FC<FormAttractionProps> = ({
         </FormStep>
 
         <FormStep>
-          <StepNumber>7</StepNumber>
+          <StepNumber>9</StepNumber>
+          <StepContent>
+            <StepTitle>Carimbo do Passaporte</StepTitle>
+            <FileUpload
+              name="stampImage"
+              placeholder="Selecione a imagem do carimbo (opcional)"
+              accept="image/*"
+              maxSize={5}
+              existingPhoto={
+                initialData?.stampImage && initialData?.stampImageUrl
+                  ? {
+                      key: initialData.stampImage,
+                      photoUrl: initialData.stampImageUrl,
+                    }
+                  : undefined
+              }
+            />
+          </StepContent>
+        </FormStep>
+
+        <FormStep>
+          <StepNumber>10</StepNumber>
           <StepContent>
             <StepTitle>Horários de Funcionamento</StepTitle>
             <ScheduleForm
@@ -322,7 +396,7 @@ const FormAttraction: React.FC<FormAttractionProps> = ({
         </FormStep>
 
         <FormStep>
-          <StepNumber>8</StepNumber>
+          <StepNumber>11</StepNumber>
           <StepContent>
             <StepTitle>Imagens</StepTitle>
             <FileUploadMultiple

@@ -29,6 +29,8 @@ const EditPlaceToEat: React.FC = () => {
             categories:
               placeToEatData.categories?.map((cat: any) => cat.categoryId) ||
               [],
+            tags:
+              placeToEatData.tags?.map((item: any) => item.tagId) || [],
             images: placeToEatData.images || [],
             schedules:
               placeToEatData.schedules?.map((schedule: any) => ({

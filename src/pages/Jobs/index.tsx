@@ -97,8 +97,8 @@ const Jobs: React.FC = () => {
           job.title.toLowerCase().includes(searchText.toLowerCase()) ||
           (job.description &&
             job.description.toLowerCase().includes(searchText.toLowerCase())) ||
-          (job.area &&
-            job.area.toLowerCase().includes(searchText.toLowerCase())) ||
+          (job.category?.name &&
+            job.category.name.toLowerCase().includes(searchText.toLowerCase())) ||
           (job.location &&
             job.location.toLowerCase().includes(searchText.toLowerCase())) ||
           (job.company.name &&

@@ -113,13 +113,13 @@ const AttractionCard: React.FC<AttractionCardProps> = ({
           </CategoryInfo>
         )}
 
-        {attraction.tags && parseTags(attraction.tags).length > 0 && (
-          <Tags>
-            {parseTags(attraction.tags).map((tag, index) => (
-              <Tag key={index}>{tag}</Tag>
-            ))}
-          </Tags>
-        )}
+        {/* {attraction.tags && parseTags(attraction.tags).length > 0 && (
+          // <Tags>
+          //   {attraction.tags.map((tag, index) => (
+          //     <Tag key={index}>{tag}</Tag>
+          //   ))}
+          // </Tags>
+        )} */}
 
         {attraction.description && (
           <div

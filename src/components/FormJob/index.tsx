@@ -31,8 +31,10 @@ import {
   ContractType,
   WorkModel,
   WorkSchedule,
+  SALARY_PERIOD_OPTIONS,
 } from "../../types/Job";
 import { Company } from "../../types/Company";
+import { CategoryType } from "../../enums/CategoryType";
 
 import {
   Container,
@@ -55,6 +57,9 @@ const FormJob: React.FC<FormJobProps> = ({ initialData, method }) => {
   const formRef = useRef<FormHandles>(null);
   const navigate = useNavigate();
   const [companies, setCompanies] = useState<Company[]>([]);
+  const [categories, setCategories] = useState<
+    { value: string; label: string }[]
+  >([]);
 
   useEffect(() => {
     const loadCompanies = async () => {
@@ -72,6 +77,25 @@ const FormJob: React.FC<FormJobProps> = ({ initialData, method }) => {
     loadCompanies();
   }, []);
 
+  useEffect(() => {
+    api
+      .get(`/category?type=${CategoryType.JOBS}`)
+      .then((res) => {
+        const categoryOptions = res.data.map((category: { id: string; name: string }) => ({
+          value: category.id,
+          label: category.name,
+        }));
+        setCategories(categoryOptions);
+      })
+      .catch(() => {
+        addToast({
+          type: "error",
+          title: "Erro ao carregar",
+          description: "Erro ao carregar categorias",
+        });
+      });
+  }, [addToast]);
+
   const handleSubmit = useCallback(
     async (data: CreateJobData | UpdateJobData) => {
       formRef.current?.setErrors({});
@@ -88,17 +112,36 @@ const FormJob: React.FC<FormJobProps> = ({ initialData, method }) => {
           workSchedule: Yup.string().required(
             "Jornada de trabalho obrigatória"
           ),
-          salary: Yup.number()
+          salaryMin: Yup.number()
             .typeError("Precisa ser um número")
             .nullable()
-            .transform((value, originalValue) => {
-              console.log("originalValue", originalValue);
-              console.log("value", value);
-              return originalValue === "" ? null : value;
-            })
+            .transform((value, originalValue) =>
+              originalValue === "" ? null : value
+            )
             .notRequired(),
+          salaryMax: Yup.number()
+            .typeError("Precisa ser um número")
+            .nullable()
+            .transform((value, originalValue) =>
+              originalValue === "" ? null : value
+            )
+            .notRequired()
+            .when("salaryMin", (salaryMin, schema) =>
+              salaryMin != null
+                ? schema.min(
+                    salaryMin as number,
+                    "Salário máximo deve ser maior ou igual ao mínimo"
+                  )
+                : schema
+            ),
+          salaryPeriod: Yup.string().when(["salaryMin", "salaryMax"], {
+            is: (salaryMin: number | null, salaryMax: number | null) =>
+              salaryMin != null || salaryMax != null,
+            then: (schema) => schema.required("Tipo de salário obrigatório"),
+            otherwise: (schema) => schema.notRequired(),
+          }),
           location: Yup.string().required("Localização obrigatória"),
-          area: Yup.string().required("Área obrigatória"),
+          categoryId: Yup.string().required("Categoria obrigatória"),
           companyId: Yup.string().required("Empresa obrigatória"),
           publicationDate: Yup.string().required(
             "Data de publicação obrigatória"
@@ -161,6 +204,7 @@ const FormJob: React.FC<FormJobProps> = ({ initialData, method }) => {
     { value: ContractType.PJ, label: "PJ" },
     { value: ContractType.INTERNSHIP, label: "Estágio" },
     { value: ContractType.TEMPORARY, label: "Temporário" },
+    { value: ContractType.FREELANCER, label: "Freelancer" },
   ];
 
   const workModelOptions = [
@@ -265,17 +309,17 @@ const FormJob: React.FC<FormJobProps> = ({ initialData, method }) => {
         <FormStep>
           <StepNumber>6</StepNumber>
           <StepContent>
-            <StepTitle>Localização e Área</StepTitle>
+            <StepTitle>Localização e Categoria</StepTitle>
             <div className="form-grid">
               <Input
                 name="location"
                 placeholder="Cidade/Estado"
                 icon={FiMapPin}
               />
-              <Input
-                name="area"
-                placeholder="Área (Ex: Tecnologia)"
-                icon={FiBriefcase}
+              <Select
+                name="categoryId"
+                placeholder="Categoria"
+                options={categories}
               />
             </div>
           </StepContent>
@@ -287,10 +331,21 @@ const FormJob: React.FC<FormJobProps> = ({ initialData, method }) => {
             <StepTitle>Salário e Quantidade</StepTitle>
             <div className="form-grid">
               <Input
-                name="salary"
+                name="salaryMin"
                 type="number"
-                placeholder="Salário (opcional)"
+                placeholder="Salário mínimo (opcional)"
                 icon={FiDollarSign}
+              />
+              <Input
+                name="salaryMax"
+                type="number"
+                placeholder="Salário máximo (opcional)"
+                icon={FiDollarSign}
+              />
+              <Select
+                name="salaryPeriod"
+                placeholder="Tipo de salário"
+                options={SALARY_PERIOD_OPTIONS}
               />
               <Input
                 name="quantity"

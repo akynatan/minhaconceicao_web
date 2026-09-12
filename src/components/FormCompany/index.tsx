@@ -57,6 +57,8 @@ const FormCompany: React.FC<FormCompanyProps> = ({ initialData, method }) => {
         const schema = Yup.object().shape({
           name: Yup.string().required("Nome obrigatório"),
           description: Yup.string(),
+          logo: Yup.string(),
+          cover: Yup.string(),
           email: Yup.string().email("Email inválido"),
           phone: Yup.string(),
           website: Yup.string().url("Website deve ser uma URL válida"),
@@ -144,13 +146,37 @@ const FormCompany: React.FC<FormCompanyProps> = ({ initialData, method }) => {
         <FormStep>
           <StepNumber>3</StepNumber>
           <StepContent>
-            <StepTitle>Logo da Empresa</StepTitle>
-            <FileUpload
-              name="logo"
-              placeholder="Selecione o logo da empresa"
-              accept="image/*"
-              maxSize={5}
-            />
+            <StepTitle>Imagens</StepTitle>
+            <div className="form-grid">
+              <FileUpload
+                name="logo"
+                placeholder="Selecione o logo da empresa"
+                accept="image/*"
+                maxSize={5}
+                existingPhoto={
+                  initialData?.logo && initialData?.logoUrl
+                    ? {
+                        key: initialData.logo,
+                        photoUrl: initialData.logoUrl,
+                      }
+                    : undefined
+                }
+              />
+              <FileUpload
+                name="cover"
+                placeholder="Selecione a foto de capa"
+                accept="image/*"
+                maxSize={5}
+                existingPhoto={
+                  initialData?.cover && initialData?.coverUrl
+                    ? {
+                        key: initialData.cover,
+                        photoUrl: initialData.coverUrl,
+                      }
+                    : undefined
+                }
+              />
+            </div>
           </StepContent>
         </FormStep>
 

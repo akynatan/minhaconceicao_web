@@ -1,4 +1,5 @@
 import { Category } from "./Category";
+import { Tag } from "./Tag";
 export interface PlaceToEatImage {
   id: string;
   image: string;
@@ -13,6 +14,15 @@ export interface PlaceToEatCategory {
   placeToEatId: string;
   categoryId: string;
   category?: Category;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface PlaceToEatTag {
+  id: string;
+  placeToEatId: string;
+  tagId: string;
+  tag?: Tag;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -51,7 +61,6 @@ export interface PlaceToEat {
   instagram?: string;
   facebook?: string;
   whatsapp?: string;
-  tags?: string;
   latitude?: number;
   longitude?: number;
   rating?: number;
@@ -61,6 +70,7 @@ export interface PlaceToEat {
   photoUrl?: string;
   images?: PlaceToEatImage[];
   categories: PlaceToEatCategory[];
+  tags: PlaceToEatTag[];
   attractions: PlaceToEatAttraction[];
   schedules: PlaceToEatSchedule[];
   createdAt: Date;
@@ -78,12 +88,12 @@ export interface CreatePlaceToEatData {
   instagram?: string;
   facebook?: string;
   whatsapp?: string;
-  tags?: string;
   latitude?: number;
   longitude?: number;
   rating?: number;
   averagePrice?: number;
   isActive?: boolean;
+  tags?: string[];
   photo?: string;
 }
 

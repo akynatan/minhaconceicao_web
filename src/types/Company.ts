@@ -6,6 +6,8 @@ export interface Company {
   description?: string;
   logo?: string;
   logoUrl?: string;
+  cover?: string;
+  coverUrl?: string;
   email?: string;
   phone?: string;
   website?: string;
@@ -22,6 +24,8 @@ export interface Company {
 export interface CreateCompanyData {
   name: string;
   description?: string;
+  logo?: string;
+  cover?: string;
   email?: string;
   phone?: string;
   website?: string;
@@ -34,6 +38,8 @@ export interface CreateCompanyData {
 export interface UpdateCompanyData {
   name?: string;
   description?: string;
+  logo?: string;
+  cover?: string;
   email?: string;
   phone?: string;
   website?: string;

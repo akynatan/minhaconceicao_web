@@ -10,7 +10,7 @@ import {
   FiDollarSign,
   FiClock,
 } from "react-icons/fi";
-import { Job, ContractType, WorkModel, WorkSchedule } from "../../types/Job";
+import { Job, ContractType, WorkModel, WorkSchedule, formatJobSalary } from "../../types/Job";
 import {
   Card,
   CardHeader,
@@ -37,11 +37,6 @@ interface JobCardProps {
 }
 
 const JobCard: React.FC<JobCardProps> = ({ job, onToggleStatus }) => {
-  const formatSalary = (salary?: number) => {
-    if (!salary) return "A combinar";
-    return `R$ ${salary.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
-  };
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("pt-BR");
   };
@@ -52,6 +47,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, onToggleStatus }) => {
       [ContractType.PJ]: "PJ",
       [ContractType.INTERNSHIP]: "Estágio",
       [ContractType.TEMPORARY]: "Temporário",
+      [ContractType.FREELANCER]: "Freelancer",
     };
     return labels[type];
   };
@@ -106,7 +102,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, onToggleStatus }) => {
 
           <InfoItem>
             <FiBriefcase size={16} />
-            <span>{job.area}</span>
+            <span>{job.category?.name ?? "-"}</span>
           </InfoItem>
 
           <InfoItem>
@@ -141,7 +137,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, onToggleStatus }) => {
 
         <SalaryInfo>
           <FiDollarSign size={16} />
-          <span>{formatSalary(job.salary)}</span>
+          <span>{formatJobSalary(job)}</span>
         </SalaryInfo>
 
         {job.description && (

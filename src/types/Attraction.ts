@@ -39,12 +39,16 @@ export interface Attraction {
   difficulty: "easy" | "medium" | "hard";
   estimatedTime: number;
   distance: number;
+  latitude?: number | null;
+  longitude?: number | null;
   howToArrive: string;
   elevationGain?: number;
   tags?: string;
   isActive: boolean;
   photo?: string;
   photoUrl?: string;
+  stampImage?: string;
+  stampImageUrl?: string;
   images?: AttractionImage[];
   schedules: AttractionSchedule[];
   categoryId: string;
@@ -60,6 +64,8 @@ export interface CreateAttractionData {
   difficulty: "easy" | "medium" | "hard";
   estimatedTime: number;
   distance: number;
+  latitude?: number | null;
+  longitude?: number | null;
   howToArrive: string;
   elevationGain?: number;
   tags?: string;

@@ -31,6 +31,8 @@ import EditCompany from "../pages/EditCompany";
 import Jobs from "../pages/Jobs";
 import AddJob from "../pages/AddJob";
 import EditJob from "../pages/EditJob";
+import TermsOfUse from "../pages/TermsOfUse";
+import PrivacyPolicy from "../pages/PrivacyPolicy";
 
 const RoutesApp: React.FC = () => {
   const { user } = useAuth();
@@ -38,6 +40,8 @@ const RoutesApp: React.FC = () => {
   return (
     <Routes>
       <Route path="/signin" element={<SignIn />} />
+      <Route path="/termos-de-uso" element={<TermsOfUse />} />
+      <Route path="/politica-de-privacidade" element={<PrivacyPolicy />} />
       <Route
         path="/profile"
         element={

@@ -7,7 +7,6 @@ import {
   FiInstagram,
   FiFacebook,
   FiMessageSquare,
-  FiTag,
   FiArrowLeft,
   FiSave,
 } from "react-icons/fi";
@@ -27,6 +26,7 @@ import InputMask from "../InputMask";
 import InputPhone from "../InputPhone";
 import Textarea from "../Textarea";
 import MultiSelectCategories from "../MultiSelectCategories";
+import MultiSelectTags from "../MultiSelectTags";
 import FileUpload from "../FileUpload";
 import { CategoryType } from "../../enums/CategoryType";
 import FileUploadMultiple from "../FileUploadMultiple";
@@ -61,7 +61,7 @@ interface FormPlaceToEatData {
   website?: string;
   instagram?: string;
   facebook?: string;
-  tags?: string;
+  tags: string[];
   photo?: string;
   images: string[];
   schedules: ScheduleData[];
@@ -150,7 +150,7 @@ const FormPlaceToEat: React.FC<FormPlaceToEatProps> = ({
               return /^\(\d{2}\) \d{4,5}-\d{4}$/.test(value);
             }
           ),
-          tags: Yup.string(),
+          tags: Yup.array().of(Yup.string()),
           latitude: Yup.string().test(
             "is-valid-latitude",
             "Latitude deve estar entre -90 e 90",
@@ -198,7 +198,7 @@ const FormPlaceToEat: React.FC<FormPlaceToEatProps> = ({
           website: formDataWithSchedules.website,
           instagram: formDataWithSchedules.instagram,
           facebook: formDataWithSchedules.facebook,
-          tags: formDataWithSchedules.tags,
+          tags: formDataWithSchedules.tags || [],
           photo: formDataWithSchedules.photo,
           images: formDataWithSchedules.images,
           schedules: formDataWithSchedules.schedules,
@@ -358,16 +358,15 @@ const FormPlaceToEat: React.FC<FormPlaceToEatProps> = ({
           <StepNumber>7</StepNumber>
           <StepContent>
             <StepTitle>Tags</StepTitle>
-            <Input
+            <MultiSelectTags
               name="tags"
-              icon={FiTag}
-              placeholder="Tags (separadas por vírgula)"
+              placeholder="Selecione as tags do local"
             />
           </StepContent>
         </FormStep>
 
         <FormStep>
-          <StepNumber>7</StepNumber>
+          <StepNumber>8</StepNumber>
           <StepContent>
             <StepTitle>Foto Principal</StepTitle>
             <FileUpload
