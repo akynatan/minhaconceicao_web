@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router";
 
 import logoImg from "../../assets/logo_company.png";
 
@@ -19,7 +18,6 @@ const LegalDocument: React.FC<LegalDocumentProps> = ({ title, children }) => {
           <h1>{title}</h1>
         </Header>
         <Document>{children}</Document>
-        <Link to="/signin">Voltar ao login</Link>
       </Content>
     </Container>
   );
