@@ -24,6 +24,7 @@ interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   options: Option[];
   containerStyle?: object;
   isDisabled?: boolean;
+  isClearable?: boolean;
   isMulti?: boolean;
   defaultValue?: any;
   component?: "creatable" | "default";
@@ -36,6 +37,7 @@ const Select: React.FC<SelectProps> = ({
   options,
   containerStyle = {},
   isDisabled = false,
+  isClearable = false,
   isMulti = false,
   component = "default",
   icon: Icon,
@@ -206,6 +208,7 @@ const Select: React.FC<SelectProps> = ({
         ref={selectRef}
         name={name}
         isDisabled={isDisabled}
+        isClearable={isClearable}
         defaultValue={defaultValue}
         isSearchable
         styles={styles}
@@ -222,6 +225,7 @@ const Select: React.FC<SelectProps> = ({
         ref={selectRef}
         name={name}
         isDisabled={isDisabled}
+        isClearable={isClearable}
         defaultValue={defaultValue}
         isSearchable
         styles={styles}

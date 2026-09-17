@@ -36,13 +36,13 @@ export interface Attraction {
   id: string;
   name: string;
   description: string;
-  difficulty: "easy" | "medium" | "hard";
-  estimatedTime: number;
-  distance: number;
+  difficulty?: "easy" | "medium" | "hard" | null;
+  estimatedTime?: number | null;
+  distance?: number | null;
   latitude?: number | null;
   longitude?: number | null;
   howToArrive: string;
-  elevationGain?: number;
+  elevationGain?: number | null;
   tags?: string;
   isActive: boolean;
   photo?: string;
@@ -61,13 +61,13 @@ export interface Attraction {
 export interface CreateAttractionData {
   name: string;
   description: string;
-  difficulty: "easy" | "medium" | "hard";
-  estimatedTime: number;
-  distance: number;
+  difficulty?: "easy" | "medium" | "hard" | null;
+  estimatedTime?: number | null;
+  distance?: number | null;
   latitude?: number | null;
   longitude?: number | null;
   howToArrive: string;
-  elevationGain?: number;
+  elevationGain?: number | null;
   tags?: string;
   categoryId: string;
 }

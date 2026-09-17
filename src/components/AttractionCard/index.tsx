@@ -27,7 +27,10 @@ const AttractionCard: React.FC<AttractionCardProps> = ({
   attraction,
   onToggleStatus,
 }) => {
-  const formatTime = (minutes: number) => {
+  const formatTime = (minutes?: number | null) => {
+    if (minutes == null) {
+      return null;
+    }
     if (minutes < 60) {
       return `${minutes} min`;
     }
@@ -38,14 +41,19 @@ const AttractionCard: React.FC<AttractionCardProps> = ({
       : `${hours}h`;
   };
 
-  const formatDistance = (meters: number) => {
+  const formatDistance = (meters?: number | null) => {
+    if (meters == null) {
+      return null;
+    }
     if (meters < 1000) {
       return `${meters}m`;
     }
     return `${(meters / 1000).toFixed(1)}km`;
   };
 
-  const getDifficultyLabel = (difficulty: "easy" | "medium" | "hard") => {
+  const getDifficultyLabel = (
+    difficulty?: "easy" | "medium" | "hard" | null
+  ) => {
     switch (difficulty) {
       case "easy":
         return "Fácil";
@@ -54,9 +62,13 @@ const AttractionCard: React.FC<AttractionCardProps> = ({
       case "hard":
         return "Difícil";
       default:
-        return difficulty;
+        return null;
     }
   };
+
+  const difficultyLabel = getDifficultyLabel(attraction.difficulty);
+  const estimatedTimeLabel = formatTime(attraction.estimatedTime);
+  const distanceLabel = formatDistance(attraction.distance);
 
   return (
     <Card>
@@ -66,25 +78,31 @@ const AttractionCard: React.FC<AttractionCardProps> = ({
           <StatusIndicator isActive={attraction.isActive}>
             {attraction.isActive ? "Ativo" : "Inativo"}
           </StatusIndicator>
-          <DifficultyBadge difficulty={attraction.difficulty}>
-            {getDifficultyLabel(attraction.difficulty)}
-          </DifficultyBadge>
+          {difficultyLabel && (
+            <DifficultyBadge difficulty={attraction.difficulty}>
+              {difficultyLabel}
+            </DifficultyBadge>
+          )}
         </div>
       </CardHeader>
 
       <CardBody>
         <AttractionInfo>
-          <InfoItem>
-            <FiClock size={16} />
-            <span>Tempo estimado: {formatTime(attraction.estimatedTime)}</span>
-          </InfoItem>
+          {estimatedTimeLabel && (
+            <InfoItem>
+              <FiClock size={16} />
+              <span>Tempo estimado: {estimatedTimeLabel}</span>
+            </InfoItem>
+          )}
 
-          <InfoItem>
-            <FiMapPin size={16} />
-            <span>Distância: {formatDistance(attraction.distance)}</span>
-          </InfoItem>
+          {distanceLabel && (
+            <InfoItem>
+              <FiMapPin size={16} />
+              <span>Distância: {distanceLabel}</span>
+            </InfoItem>
+          )}
 
-          {attraction.elevationGain && (
+          {attraction.elevationGain != null && (
             <InfoItem>
               <FiTrendingUp size={16} />
               <span>Elevação: {attraction.elevationGain}m</span>

@@ -31,7 +31,7 @@ export const AttractionName = styled.h3`
 `;
 
 export const DifficultyBadge = styled.span<{
-  difficulty: "easy" | "medium" | "hard";
+  difficulty?: "easy" | "medium" | "hard" | null;
 }>`
   padding: 4px 8px;
   border-radius: 6px;

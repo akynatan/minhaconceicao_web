@@ -40,13 +40,13 @@ import { DIFICULTY_OPTIONS } from "../../enums/Dificulty";
 interface FormAttractionData {
   name: string;
   description: string;
-  difficulty: "easy" | "medium" | "hard";
-  estimatedTime: number;
-  distance: number;
+  difficulty?: "easy" | "medium" | "hard" | "";
+  estimatedTime?: number | "";
+  distance?: number | "";
   latitude?: string;
   longitude?: string;
   howToArrive: string;
-  elevationGain?: number;
+  elevationGain?: number | "";
   tags?: string;
   categoryId: string;
   photo?: string;
@@ -93,18 +93,34 @@ const FormAttraction: React.FC<FormAttractionProps> = ({
           images: data.images || [],
         };
 
+        const emptyToNull = (value: unknown) => {
+          if (value === "" || value === undefined || value === null) {
+            return null;
+          }
+
+          const numericValue = Number(value);
+          return Number.isNaN(numericValue) ? null : numericValue;
+        };
+
         const schema = Yup.object().shape({
           name: Yup.string().required("Nome obrigatório"),
           description: Yup.string().required("Descrição obrigatória"),
           difficulty: Yup.string()
-            .oneOf(["easy", "medium", "hard"], "Dificuldade inválida")
-            .required("Dificuldade obrigatória"),
+            .transform((value) => (value === "" ? null : value))
+            .nullable()
+            .oneOf(["easy", "medium", "hard", null], "Dificuldade inválida"),
           estimatedTime: Yup.number()
-            .positive("Tempo estimado deve ser positivo")
-            .required("Tempo estimado obrigatório"),
+            .transform((value, originalValue) =>
+              originalValue === "" || originalValue == null ? null : value
+            )
+            .nullable()
+            .positive("Tempo estimado deve ser positivo"),
           distance: Yup.number()
-            .positive("Distância deve ser positiva")
-            .required("Distância obrigatória"),
+            .transform((value, originalValue) =>
+              originalValue === "" || originalValue == null ? null : value
+            )
+            .nullable()
+            .positive("Distância deve ser positiva"),
           latitude: Yup.string().test(
             "is-valid-latitude",
             "Latitude inválida",
@@ -125,8 +141,11 @@ const FormAttraction: React.FC<FormAttractionProps> = ({
           ),
           howToArrive: Yup.string().required("Como chegar obrigatório"),
           elevationGain: Yup.number()
-            .positive("Elevação deve ser positiva")
-            .nullable(),
+            .transform((value, originalValue) =>
+              originalValue === "" || originalValue == null ? null : value
+            )
+            .nullable()
+            .positive("Elevação deve ser positiva"),
           tags: Yup.string(),
           categoryId: Yup.string().required("Categoria obrigatória"),
           photo: Yup.string(),
@@ -142,9 +161,9 @@ const FormAttraction: React.FC<FormAttractionProps> = ({
         const jsonData = {
           name: formDataWithSchedules.name,
           description: formDataWithSchedules.description,
-          difficulty: formDataWithSchedules.difficulty,
-          estimatedTime: formDataWithSchedules.estimatedTime,
-          distance: formDataWithSchedules.distance,
+          difficulty: formDataWithSchedules.difficulty || null,
+          estimatedTime: emptyToNull(formDataWithSchedules.estimatedTime),
+          distance: emptyToNull(formDataWithSchedules.distance),
           latitude: formDataWithSchedules.latitude
             ? Number(formDataWithSchedules.latitude)
             : undefined,
@@ -152,7 +171,7 @@ const FormAttraction: React.FC<FormAttractionProps> = ({
             ? Number(formDataWithSchedules.longitude)
             : undefined,
           howToArrive: formDataWithSchedules.howToArrive,
-          elevationGain: formDataWithSchedules.elevationGain,
+          elevationGain: emptyToNull(formDataWithSchedules.elevationGain),
           tags: formDataWithSchedules.tags,
           categoryId: formDataWithSchedules.categoryId,
           photo: formDataWithSchedules.photo,
@@ -265,7 +284,8 @@ const FormAttraction: React.FC<FormAttractionProps> = ({
               <Select
                 name="difficulty"
                 options={DIFICULTY_OPTIONS}
-                placeholder="Selecione a dificuldade"
+                placeholder="Dificuldade (opcional)"
+                isClearable
                 defaultValue={
                   initialData?.difficulty
                     ? DIFICULTY_OPTIONS.find(
@@ -278,13 +298,13 @@ const FormAttraction: React.FC<FormAttractionProps> = ({
                 name="estimatedTime"
                 type="number"
                 icon={FiClock}
-                placeholder="Tempo estimado (minutos)"
+                placeholder="Tempo estimado (minutos) - opcional"
               />
               <Input
                 name="distance"
                 type="number"
                 icon={FiMapPin}
-                placeholder="Distância (metros)"
+                placeholder="Distância da trilha (metros) - opcional"
               />
               <Input
                 name="elevationGain"
