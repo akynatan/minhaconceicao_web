@@ -9,6 +9,9 @@ import {
   FiPackage,
   FiBriefcase,
   FiFileText,
+  FiBookOpen,
+  FiCalendar,
+  FiTool,
 } from "react-icons/fi";
 
 import logoImg from "../../assets/logo.png";
@@ -83,6 +86,27 @@ const MenuHeader: React.FC = () => {
           >
             <FiPackage />
             <span>Produtores</span>
+          </MenuItem>
+          <MenuItem
+            to="/artesaos"
+            className={isActiveRoute("/artesaos") ? "active" : ""}
+          >
+            <FiTool />
+            <span>Artesãos</span>
+          </MenuItem>
+          <MenuItem
+            to="/noticias"
+            className={isActiveRoute("/noticias") ? "active" : ""}
+          >
+            <FiBookOpen />
+            <span>Notícias</span>
+          </MenuItem>
+          <MenuItem
+            to="/eventos"
+            className={isActiveRoute("/eventos") ? "active" : ""}
+          >
+            <FiCalendar />
+            <span>Eventos</span>
           </MenuItem>
           <MenuItem
             to="/empresas"

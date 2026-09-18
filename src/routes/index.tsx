@@ -31,6 +31,15 @@ import EditCompany from "../pages/EditCompany";
 import Jobs from "../pages/Jobs";
 import AddJob from "../pages/AddJob";
 import EditJob from "../pages/EditJob";
+import NewsPage from "../pages/News";
+import AddNews from "../pages/AddNews";
+import EditNews from "../pages/EditNews";
+import Events from "../pages/Events";
+import AddEvent from "../pages/AddEvent";
+import EditEvent from "../pages/EditEvent";
+import Artisans from "../pages/Artisans";
+import AddArtisan from "../pages/AddArtisan";
+import EditArtisan from "../pages/EditArtisan";
 import TermsOfUse from "../pages/TermsOfUse";
 import PrivacyPolicy from "../pages/PrivacyPolicy";
 
@@ -215,6 +224,78 @@ const RoutesApp: React.FC = () => {
         element={
           <ProtectedRoute user={user}>
             <EditJob />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/noticias"
+        element={
+          <ProtectedRoute user={user}>
+            <NewsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/noticias/nova"
+        element={
+          <ProtectedRoute user={user}>
+            <AddNews />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/noticias/:id"
+        element={
+          <ProtectedRoute user={user}>
+            <EditNews />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/eventos"
+        element={
+          <ProtectedRoute user={user}>
+            <Events />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/eventos/novo"
+        element={
+          <ProtectedRoute user={user}>
+            <AddEvent />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/eventos/:id"
+        element={
+          <ProtectedRoute user={user}>
+            <EditEvent />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/artesaos"
+        element={
+          <ProtectedRoute user={user}>
+            <Artisans />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/artesaos/novo"
+        element={
+          <ProtectedRoute user={user}>
+            <AddArtisan />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/artesaos/:id"
+        element={
+          <ProtectedRoute user={user}>
+            <EditArtisan />
           </ProtectedRoute>
         }
       />

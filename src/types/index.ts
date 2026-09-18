@@ -11,3 +11,6 @@ export * from "./Company";
 export * from "./Job";
 export * from "../enums/CategoryType";
 export * from "./Attraction";
+export * from "./News";
+export * from "./Event";
+export * from "./Artisan";

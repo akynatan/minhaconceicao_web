@@ -60,6 +60,7 @@ export const Menu = styled.section`
   gap: 8px;
   width: 100%;
   flex: 1;
+  overflow-y: auto;
 
   @media (max-width: 768px) {
     display: none;
