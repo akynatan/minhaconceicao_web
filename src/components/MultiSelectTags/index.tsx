@@ -49,7 +49,7 @@ const MultiSelectTags: React.FC<MultiSelectTagsProps> = ({
 
   useEffect(() => {
     loadTags();
-  }, []);
+  }, [tagType]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

@@ -7,7 +7,6 @@ import {
   FiInstagram,
   FiFacebook,
   FiMessageSquare,
-  FiTag,
   FiArrowLeft,
   FiSave,
 } from "react-icons/fi";
@@ -27,8 +26,10 @@ import InputMask from "../InputMask";
 import InputPhone from "../InputPhone";
 import Textarea from "../Textarea";
 import MultiSelectCategories from "../MultiSelectCategories";
+import MultiSelectTags from "../MultiSelectTags";
 import FileUpload from "../FileUpload";
 import { CategoryType } from "../../enums/CategoryType";
+import { TagType } from "../../enums/TagType";
 import FileUploadMultiple from "../FileUploadMultiple";
 import ScheduleForm, { ScheduleData } from "../ScheduleForm";
 
@@ -61,7 +62,7 @@ interface FormPlaceToSleepData {
   website?: string;
   instagram?: string;
   facebook?: string;
-  tags?: string;
+  tags?: string[];
   photo?: string;
   images: string[];
   schedules: ScheduleData[];
@@ -150,7 +151,7 @@ const FormPlaceToSleep: React.FC<FormPlaceToSleepProps> = ({
               return /^\(\d{2}\) \d{4,5}-\d{4}$/.test(value);
             }
           ),
-          tags: Yup.string(),
+          tags: Yup.array().of(Yup.string()),
           latitude: Yup.string().test(
             "is-valid-latitude",
             "Latitude deve estar entre -90 e 90",
@@ -198,7 +199,7 @@ const FormPlaceToSleep: React.FC<FormPlaceToSleepProps> = ({
           website: formDataWithSchedules.website,
           instagram: formDataWithSchedules.instagram,
           facebook: formDataWithSchedules.facebook,
-          tags: formDataWithSchedules.tags,
+          tags: formDataWithSchedules.tags || [],
           photo: formDataWithSchedules.photo,
           images: formDataWithSchedules.images,
           schedules: formDataWithSchedules.schedules,
@@ -358,10 +359,10 @@ const FormPlaceToSleep: React.FC<FormPlaceToSleepProps> = ({
           <StepNumber>7</StepNumber>
           <StepContent>
             <StepTitle>Tags</StepTitle>
-            <Input
+            <MultiSelectTags
               name="tags"
-              icon={FiTag}
-              placeholder="Tags (separadas por vírgula)"
+              placeholder="Selecione as tags do local"
+              tagType={TagType.PLACE_TO_SLEEP}
             />
           </StepContent>
         </FormStep>

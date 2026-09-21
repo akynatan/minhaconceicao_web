@@ -1,4 +1,12 @@
 import { Category } from "./Category";
+import { Tag } from "./Tag";
+
+export interface AttractionTag {
+  id: string;
+  attractionId: string;
+  tagId: string;
+  tag?: Tag;
+}
 export interface AttractionImage {
   id: string;
   image: string;
@@ -43,7 +51,7 @@ export interface Attraction {
   longitude?: number | null;
   howToArrive: string;
   elevationGain?: number | null;
-  tags?: string;
+  tags?: AttractionTag[] | string[];
   isActive: boolean;
   photo?: string;
   photoUrl?: string;
@@ -68,7 +76,7 @@ export interface CreateAttractionData {
   longitude?: number | null;
   howToArrive: string;
   elevationGain?: number | null;
-  tags?: string;
+  tags?: string[];
   categoryId: string;
 }
 

@@ -8,15 +8,18 @@ import { Container, Content, HeaderPage } from "./styles";
 import api from "../../services/api";
 import { User } from "../../types/User";
 import Button from "../../components/Button";
+import { useToast } from "../../hooks/toast";
 
-const roles = {
+const roles: Record<string, string> = {
   admin: "Admin",
   seller: "Vendedor",
+  user: "App",
 };
 
 const Users: React.FC = () => {
   const [isFetching, setIsFetching] = useState(true);
   const [users, setUsers] = useState<User[]>([]);
+  const { addToast } = useToast();
 
   useEffect(() => {
     api
@@ -28,6 +31,39 @@ const Users: React.FC = () => {
         setIsFetching(false);
       });
   }, []);
+
+  const handleToggleBlocked = async (user: User) => {
+    const action = user.blocked ? "desbloquear" : "bloquear";
+    const confirmed = window.confirm(
+      `Deseja ${action} o usuário ${user.name}?`
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      const response = await api.patch(`/users/${user.id}/toggle-blocked`);
+
+      setUsers((prev) =>
+        prev.map((item) => (item.id === user.id ? response.data : item))
+      );
+
+      addToast({
+        type: "success",
+        title: user.blocked ? "Usuário desbloqueado" : "Usuário bloqueado",
+        description: user.blocked
+          ? "O usuário poderá acessar o aplicativo novamente."
+          : "O usuário não poderá mais acessar o aplicativo.",
+      });
+    } catch {
+      addToast({
+        type: "error",
+        title: "Erro ao alterar bloqueio",
+        description: "Não foi possível alterar o status do usuário.",
+      });
+    }
+  };
 
   return (
     <Container>
@@ -49,6 +85,7 @@ const Users: React.FC = () => {
               <th>Nome</th>
               <th>Email</th>
               <th>Função</th>
+              <th>Status</th>
               <th>Ações</th>
             </tr>
           </thead>
@@ -59,20 +96,42 @@ const Users: React.FC = () => {
                   <td className="column2">{user.name}</td>
                   <td className="column1">{user.email}</td>
                   <td className="column1">
-                    {user.role ? roles[user.role] : "-"}
+                    {user.role ? roles[user.role] ?? user.role : "-"}
                   </td>
-                  <td style={{ width: "50px" }}>
-                    <Link
-                      style={{
-                        textDecoration: "none",
-                        fontWeight: 600,
-                        color: "#ff9000",
-                      }}
-                      to={`/usuarios/${user.id}`}
-                      title="Editar Cliente"
+                  <td className="column1">
+                    <span
+                      className={
+                        user.blocked ? "status-blocked" : "status-active"
+                      }
                     >
-                      <HiPencil />
-                    </Link>
+                      {user.blocked ? "Bloqueado" : "Ativo"}
+                    </span>
+                  </td>
+                  <td style={{ width: "140px" }}>
+                    <div className="actions-cell">
+                      {user.role === "user" && (
+                        <button
+                          type="button"
+                          className={`block-button${
+                            user.blocked ? " unlock" : ""
+                          }`}
+                          onClick={() => handleToggleBlocked(user)}
+                        >
+                          {user.blocked ? "Desbloquear" : "Bloquear"}
+                        </button>
+                      )}
+                      <Link
+                        style={{
+                          textDecoration: "none",
+                          fontWeight: 600,
+                          color: "#ff9000",
+                        }}
+                        to={`/usuarios/${user.id}`}
+                        title="Editar Cliente"
+                      >
+                        <HiPencil />
+                      </Link>
+                    </div>
                   </td>
                 </tr>
               );

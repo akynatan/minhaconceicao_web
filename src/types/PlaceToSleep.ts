@@ -1,4 +1,5 @@
 import { Category } from "./Category";
+import { Tag } from "./Tag";
 export interface PlaceToSleepImage {
   id: string;
   image: string;
@@ -28,6 +29,13 @@ export interface PlaceToSleepCategory {
   category: Category;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface PlaceToSleepTag {
+  id: string;
+  placeToSleepId: string;
+  tagId: string;
+  tag?: Tag;
 }
 
 export interface PlaceToSleepAttraction {
@@ -60,7 +68,7 @@ export interface PlaceToSleep {
   instagram?: string;
   facebook?: string;
   whatsapp?: string;
-  tags?: string;
+  tags?: PlaceToSleepTag[] | string[];
   latitude?: number;
   longitude?: number;
   rating?: number;
@@ -87,7 +95,7 @@ export interface CreatePlaceToSleepData {
   instagram?: string;
   facebook?: string;
   whatsapp?: string;
-  tags?: string;
+  tags?: string[];
   latitude?: number;
   longitude?: number;
   rating?: number;

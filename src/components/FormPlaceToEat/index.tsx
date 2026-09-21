@@ -29,6 +29,7 @@ import MultiSelectCategories from "../MultiSelectCategories";
 import MultiSelectTags from "../MultiSelectTags";
 import FileUpload from "../FileUpload";
 import { CategoryType } from "../../enums/CategoryType";
+import { TagType } from "../../enums/TagType";
 import FileUploadMultiple from "../FileUploadMultiple";
 import ScheduleForm, { ScheduleData } from "../ScheduleForm";
 
@@ -361,6 +362,7 @@ const FormPlaceToEat: React.FC<FormPlaceToEatProps> = ({
             <MultiSelectTags
               name="tags"
               placeholder="Selecione as tags do local"
+              tagType={TagType.PLACE_TO_EAT}
             />
           </StepContent>
         </FormStep>

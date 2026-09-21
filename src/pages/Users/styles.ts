@@ -106,6 +106,37 @@ export const Content = styled.main`
     margin-left: 10px;
   }
 
+  .actions-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .block-button {
+    border: 0;
+    background: transparent;
+    color: #c53030;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .block-button.unlock {
+    color: #2e7d32;
+  }
+
+  .status-blocked {
+    color: #c53030;
+    font-weight: 600;
+  }
+
+  .status-active {
+    color: #2e7d32;
+    font-weight: 600;
+  }
+
   @media screen and (max-width: 992px) {
     table {
       display: block;
@@ -145,25 +176,16 @@ export const Content = styled.main`
       content: 'Nome';
     }
     table tbody tr td:nth-child(2):before {
-      content: 'Código';
+      content: 'Email';
     }
     table tbody tr td:nth-child(3):before {
-      content: 'Descrição';
+      content: 'Função';
     }
     table tbody tr td:nth-child(4):before {
-      content: 'Marca';
+      content: 'Status';
     }
     table tbody tr td:nth-child(5):before {
-      content: 'Modelo';
-    }
-    table tbody tr td:nth-child(6):before {
-      content: 'Categoria';
-    }
-    table tbody tr td:nth-child(7):before {
-      content: 'Fabricante';
-    }
-    table tbody tr td:nth-child(8):before {
-      content: 'Unidade de Medida';
+      content: 'Ações';
     }
 
     table td,

@@ -43,7 +43,15 @@ const EditAttraction: React.FC = () => {
           //     })) || [],
           // };
 
-          setAttraction(attractionData);
+          const mappedData = {
+            ...attractionData,
+            tags:
+              attractionData.tags?.map((item: any) =>
+                typeof item === "string" ? item : item.tagId
+              ) || [],
+          };
+
+          setAttraction(mappedData);
         })
         .catch(() => {
           addToast({

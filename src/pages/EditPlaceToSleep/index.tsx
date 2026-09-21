@@ -24,6 +24,10 @@ const EditPlaceToSleep: React.FC = () => {
           categories:
             placeToSleepData.categories?.map((cat: any) => cat.categoryId) ||
             [],
+          tags:
+            placeToSleepData.tags?.map((item: any) =>
+              typeof item === "string" ? item : item.tagId
+            ) || [],
           images: placeToSleepData.images || [],
           schedules:
             placeToSleepData.schedules?.map((schedule: any) => ({

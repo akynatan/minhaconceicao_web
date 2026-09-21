@@ -3,7 +3,6 @@ import {
   FiMapPin,
   FiClock,
   FiTrendingUp,
-  FiTag,
   FiArrowLeft,
   FiSave,
 } from "react-icons/fi";
@@ -22,7 +21,9 @@ import Select from "../Select";
 import FileUpload from "../FileUpload";
 import FileUploadMultiple from "../FileUploadMultiple";
 import ScheduleForm, { ScheduleData } from "../ScheduleForm";
+import MultiSelectTags from "../MultiSelectTags";
 import { CategoryType } from "../../enums/CategoryType";
+import { TagType } from "../../enums/TagType";
 
 import {
   Container,
@@ -47,7 +48,7 @@ interface FormAttractionData {
   longitude?: string;
   howToArrive: string;
   elevationGain?: number | "";
-  tags?: string;
+  tags?: string[];
   categoryId: string;
   photo?: string;
   stampImage?: string | null;
@@ -146,7 +147,7 @@ const FormAttraction: React.FC<FormAttractionProps> = ({
             )
             .nullable()
             .positive("Elevação deve ser positiva"),
-          tags: Yup.string(),
+          tags: Yup.array().of(Yup.string()),
           categoryId: Yup.string().required("Categoria obrigatória"),
           photo: Yup.string(),
           stampImage: Yup.string().nullable(),
@@ -172,7 +173,7 @@ const FormAttraction: React.FC<FormAttractionProps> = ({
             : undefined,
           howToArrive: formDataWithSchedules.howToArrive,
           elevationGain: emptyToNull(formDataWithSchedules.elevationGain),
-          tags: formDataWithSchedules.tags,
+          tags: formDataWithSchedules.tags || [],
           categoryId: formDataWithSchedules.categoryId,
           photo: formDataWithSchedules.photo,
           stampImage:
@@ -353,10 +354,10 @@ const FormAttraction: React.FC<FormAttractionProps> = ({
           <StepNumber>7</StepNumber>
           <StepContent>
             <StepTitle>Tags</StepTitle>
-            <Input
+            <MultiSelectTags
               name="tags"
-              icon={FiTag}
-              placeholder="Tags (separadas por vírgula)"
+              placeholder="Selecione as tags da atração"
+              tagType={TagType.ATTRACTIONS}
             />
           </StepContent>
         </FormStep>

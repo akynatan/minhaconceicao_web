@@ -4,7 +4,8 @@ export interface User {
   email: string;
   password: string;
   user_id_rd: string;
-  role: "admin" | "seller";
+  role: "admin" | "seller" | "user";
+  blocked?: boolean;
   created_at: Date;
   updated_at: Date;
 }
