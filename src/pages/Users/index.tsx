@@ -1,10 +1,9 @@
-/* eslint-disable no-alert */
 import React, { useEffect, useState } from "react";
 
 import { Link } from "react-router";
 import { HiPencil } from "react-icons/hi";
 import { FiPlusCircle } from "react-icons/fi";
-import { Container, Content, HeaderPage } from "./styles";
+import { Container, Content, HeaderPage, StatusSwitch } from "./styles";
 import api from "../../services/api";
 import { User } from "../../types/User";
 import Button from "../../components/Button";
@@ -19,6 +18,7 @@ const roles: Record<string, string> = {
 const Users: React.FC = () => {
   const [isFetching, setIsFetching] = useState(true);
   const [users, setUsers] = useState<User[]>([]);
+  const [togglingId, setTogglingId] = useState<string | null>(null);
   const { addToast } = useToast();
 
   useEffect(() => {
@@ -33,14 +33,11 @@ const Users: React.FC = () => {
   }, []);
 
   const handleToggleBlocked = async (user: User) => {
-    const action = user.blocked ? "desbloquear" : "bloquear";
-    const confirmed = window.confirm(
-      `Deseja ${action} o usuário ${user.name}?`
-    );
-
-    if (!confirmed) {
+    if (togglingId) {
       return;
     }
+
+    setTogglingId(user.id);
 
     try {
       const response = await api.patch(`/users/${user.id}/toggle-blocked`);
@@ -62,6 +59,8 @@ const Users: React.FC = () => {
         title: "Erro ao alterar bloqueio",
         description: "Não foi possível alterar o status do usuário.",
       });
+    } finally {
+      setTogglingId(null);
     }
   };
 
@@ -85,7 +84,7 @@ const Users: React.FC = () => {
               <th>Nome</th>
               <th>Email</th>
               <th>Função</th>
-              <th>Status</th>
+              <th>Bloqueio</th>
               <th>Ações</th>
             </tr>
           </thead>
@@ -99,27 +98,27 @@ const Users: React.FC = () => {
                     {user.role ? roles[user.role] ?? user.role : "-"}
                   </td>
                   <td className="column1">
-                    <span
-                      className={
-                        user.blocked ? "status-blocked" : "status-active"
-                      }
-                    >
-                      {user.blocked ? "Bloqueado" : "Ativo"}
-                    </span>
+                    {user.role === "user" ? (
+                      <StatusSwitch>
+                        <label>
+                          <input
+                            type="checkbox"
+                            checked={Boolean(user.blocked)}
+                            disabled={togglingId === user.id}
+                            onChange={() => handleToggleBlocked(user)}
+                          />
+                          <span className="slider" />
+                        </label>
+                        <span className={user.blocked ? "blocked" : "active"}>
+                          {user.blocked ? "Bloqueado" : "Ativo"}
+                        </span>
+                      </StatusSwitch>
+                    ) : (
+                      <span className="status-active">Ativo</span>
+                    )}
                   </td>
                   <td style={{ width: "140px" }}>
                     <div className="actions-cell">
-                      {user.role === "user" && (
-                        <button
-                          type="button"
-                          className={`block-button${
-                            user.blocked ? " unlock" : ""
-                          }`}
-                          onClick={() => handleToggleBlocked(user)}
-                        >
-                          {user.blocked ? "Desbloquear" : "Bloquear"}
-                        </button>
-                      )}
                       <Link
                         style={{
                           textDecoration: "none",

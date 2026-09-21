@@ -113,20 +113,6 @@ export const Content = styled.main`
     gap: 12px;
   }
 
-  .block-button {
-    border: 0;
-    background: transparent;
-    color: #c53030;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    padding: 0;
-  }
-
-  .block-button.unlock {
-    color: #2e7d32;
-  }
-
   .status-blocked {
     color: #c53030;
     font-weight: 600;
@@ -182,7 +168,7 @@ export const Content = styled.main`
       content: 'Função';
     }
     table tbody tr td:nth-child(4):before {
-      content: 'Status';
+      content: 'Bloqueio';
     }
     table tbody tr td:nth-child(5):before {
       content: 'Ações';
@@ -205,6 +191,77 @@ export const Content = styled.main`
     tbody tr {
       font-size: 14px;
     }
+  }
+`;
+
+export const StatusSwitch = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  label {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    cursor: pointer;
+
+    input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: 0.4s;
+      border-radius: 24px;
+
+      &:before {
+        position: absolute;
+        content: '';
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: 0.4s;
+        border-radius: 50%;
+      }
+    }
+
+    input:checked + .slider {
+      background-color: #c53030;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+
+    input:disabled + .slider {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  span {
+    font-size: 13px;
+    font-weight: 600;
+    color: #808080;
+  }
+
+  span.blocked {
+    color: #c53030;
+  }
+
+  span.active {
+    color: #2e7d32;
   }
 `;
 
