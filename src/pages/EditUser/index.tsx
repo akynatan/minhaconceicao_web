@@ -10,9 +10,10 @@ import { User } from "../../types";
 
 import { Container, ContentPage, Content } from "./styles";
 
-const roles = {
+const roles: Record<User["role"], string> = {
   admin: "Admin",
   seller: "Vendedor",
+  user: "App",
 };
 
 const EditUser: React.FC = () => {
