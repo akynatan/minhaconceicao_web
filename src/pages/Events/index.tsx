@@ -41,6 +41,29 @@ const Events: React.FC = () => {
       });
   }, [addToast]);
 
+  const handleToggleStatus = useCallback(
+    async (id: string) => {
+      try {
+        const updatedEvent = await api.patch(`/events/${id}/toggle-active`);
+        setEvents((prev) =>
+          prev.map((item) => (item.id === id ? updatedEvent.data : item))
+        );
+        addToast({
+          type: "success",
+          title: "Status alterado",
+          description: "Status do evento alterado com sucesso",
+        });
+      } catch {
+        addToast({
+          type: "error",
+          title: "Erro ao alterar status",
+          description: "Erro ao alterar status do evento",
+        });
+      }
+    },
+    [addToast]
+  );
+
   useEffect(() => {
     loadEvents();
   }, [loadEvents]);
@@ -86,7 +109,11 @@ const Events: React.FC = () => {
           <>
             <CardsGrid>
               {filteredEvents.map((item) => (
-                <EventCard key={item.id} event={item} />
+                <EventCard
+                  key={item.id}
+                  event={item}
+                  onToggleStatus={handleToggleStatus}
+                />
               ))}
             </CardsGrid>
             {filteredEvents.length === 0 && (

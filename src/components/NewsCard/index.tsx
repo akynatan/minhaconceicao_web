@@ -15,11 +15,13 @@ import {
   PhotoContainer,
   Photo,
   DefaultPhoto,
+  StatusSwitch,
   EditButton,
 } from "../ProducerCard/styles";
 
 interface NewsCardProps {
   news: News;
+  onToggleStatus: (id: string) => void;
 }
 
 const formatDate = (value?: string) => {
@@ -27,7 +29,7 @@ const formatDate = (value?: string) => {
   return new Date(value).toLocaleString("pt-BR");
 };
 
-const NewsCard: React.FC<NewsCardProps> = ({ news }) => {
+const NewsCard: React.FC<NewsCardProps> = ({ news, onToggleStatus }) => {
   const cover = news.images?.[0];
 
   return (
@@ -46,7 +48,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ news }) => {
           <div style={{ flex: 1 }}>
             <ProducerName>{news.name}</ProducerName>
             <StatusIndicator isActive={news.isActive}>
-              {news.kind === "guide" ? "Guia" : "Notícia"}
+              {news.isActive ? "Ativo" : "Inativo"}
             </StatusIndicator>
           </div>
         </div>
@@ -57,6 +59,10 @@ const NewsCard: React.FC<NewsCardProps> = ({ news }) => {
           <InfoItem>
             <FiCalendar size={16} />
             <span>{formatDate(news.date)}</span>
+          </InfoItem>
+          <InfoItem>
+            <FiBookOpen size={16} />
+            <span>{news.kind === "guide" ? "Guia" : "Notícia"}</span>
           </InfoItem>
         </ProducerInfo>
         {news.description && (
@@ -73,7 +79,17 @@ const NewsCard: React.FC<NewsCardProps> = ({ news }) => {
       </CardBody>
 
       <CardActions>
-        <span />
+        <StatusSwitch>
+          <label>
+            <input
+              type="checkbox"
+              checked={news.isActive}
+              onChange={() => onToggleStatus(news.id)}
+            />
+            <span className="slider"></span>
+          </label>
+          <span>Ativo</span>
+        </StatusSwitch>
         <EditButton as={Link} to={`/noticias/${news.id}`}>
           <HiPencil size={18} />
           Editar

@@ -23,6 +23,7 @@ export interface EventItem {
   address: string;
   latitude?: number;
   longitude?: number;
+  isActive: boolean;
   images?: EventImage[];
   categories?: EventCategoryRelation[];
   createdAt: string;

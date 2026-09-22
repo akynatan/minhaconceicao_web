@@ -73,7 +73,7 @@ const FormNews: React.FC<FormNewsProps> = ({ initialData, method, url }) => {
           description: data.description,
           date: data.date ? new Date(data.date).toISOString() : undefined,
           kind: data.kind || "news",
-          isActive: true,
+          isActive: method === "add" ? true : initialData?.isActive ?? true,
           categoryIds: data.categories || [],
           images: data.images || [],
         };

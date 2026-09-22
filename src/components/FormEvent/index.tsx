@@ -76,6 +76,8 @@ const FormEvent: React.FC<FormEventProps> = ({ initialData, method, url }) => {
           address: data.address,
           latitude: data.latitude ? Number(data.latitude) : undefined,
           longitude: data.longitude ? Number(data.longitude) : undefined,
+          isActive:
+            method === "add" ? true : initialData?.isActive ?? true,
           categoryIds: data.categories || [],
           images: data.images || [],
         };

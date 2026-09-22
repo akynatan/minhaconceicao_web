@@ -9,16 +9,19 @@ import {
   CardBody,
   CardActions,
   ProducerName,
+  StatusIndicator,
   ProducerInfo,
   InfoItem,
   PhotoContainer,
   Photo,
   DefaultPhoto,
+  StatusSwitch,
   EditButton,
 } from "../ProducerCard/styles";
 
 interface EventCardProps {
   event: EventItem;
+  onToggleStatus: (id: string) => void;
 }
 
 const formatDate = (value?: string) => {
@@ -26,7 +29,7 @@ const formatDate = (value?: string) => {
   return new Date(value).toLocaleString("pt-BR");
 };
 
-const EventCard: React.FC<EventCardProps> = ({ event }) => {
+const EventCard: React.FC<EventCardProps> = ({ event, onToggleStatus }) => {
   const cover = event.images?.[0];
 
   return (
@@ -44,6 +47,9 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
           </PhotoContainer>
           <div style={{ flex: 1 }}>
             <ProducerName>{event.name}</ProducerName>
+            <StatusIndicator isActive={event.isActive}>
+              {event.isActive ? "Ativo" : "Inativo"}
+            </StatusIndicator>
           </div>
         </div>
       </CardHeader>
@@ -79,7 +85,17 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
       </CardBody>
 
       <CardActions>
-        <span />
+        <StatusSwitch>
+          <label>
+            <input
+              type="checkbox"
+              checked={event.isActive}
+              onChange={() => onToggleStatus(event.id)}
+            />
+            <span className="slider"></span>
+          </label>
+          <span>Ativo</span>
+        </StatusSwitch>
         <EditButton as={Link} to={`/eventos/${event.id}`}>
           <HiPencil size={18} />
           Editar

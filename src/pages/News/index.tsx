@@ -41,6 +41,29 @@ const NewsPage: React.FC = () => {
       });
   }, [addToast]);
 
+  const handleToggleStatus = useCallback(
+    async (id: string) => {
+      try {
+        const updatedNews = await api.patch(`/news/${id}/toggle-active`);
+        setNews((prev) =>
+          prev.map((item) => (item.id === id ? updatedNews.data : item))
+        );
+        addToast({
+          type: "success",
+          title: "Status alterado",
+          description: "Status da notícia alterado com sucesso",
+        });
+      } catch {
+        addToast({
+          type: "error",
+          title: "Erro ao alterar status",
+          description: "Erro ao alterar status da notícia",
+        });
+      }
+    },
+    [addToast]
+  );
+
   useEffect(() => {
     loadNews();
   }, [loadNews]);
@@ -85,7 +108,11 @@ const NewsPage: React.FC = () => {
           <>
             <CardsGrid>
               {filteredNews.map((item) => (
-                <NewsCard key={item.id} news={item} />
+                <NewsCard
+                  key={item.id}
+                  news={item}
+                  onToggleStatus={handleToggleStatus}
+                />
               ))}
             </CardsGrid>
             {filteredNews.length === 0 && (
