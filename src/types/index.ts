@@ -5,6 +5,7 @@ export * from "./User";
 export * from "./LeadLog";
 export * from "./PlaceToEat";
 export * from "./PlaceToSleep";
+export * from "./PlaceToSleepRoom";
 export * from "./Guide";
 export * from "./Producer";
 export * from "./Company";

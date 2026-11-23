@@ -91,8 +91,17 @@ export const CardActions = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
   padding-top: 16px;
   border-top: 1px solid #f0f0f0;
+`;
+
+export const ActionButtons = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
 `;
 
 export const StatusSwitch = styled.div`
@@ -148,6 +157,30 @@ export const StatusSwitch = styled.div`
   span {
     font-size: 14px;
     color: #666666;
+  }
+`;
+
+export const RoomsButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  color: #007bff;
+  border: 1px solid #007bff;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background: #e7f1ff;
+  }
+
+  svg {
+    flex-shrink: 0;
   }
 `;
 

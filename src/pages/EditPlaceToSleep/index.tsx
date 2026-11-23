@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { FiHome } from "react-icons/fi";
 import { useParams } from "react-router";
 import api from "../../services/api";
 import { PlaceToSleep } from "../../types/PlaceToSleep";
 import FormPlaceToSleep from "../../components/FormPlaceToSleep";
 import { useToast } from "../../hooks/toast";
+import { ManageRooms, RoomsBar } from "./styles";
 
 const EditPlaceToSleep: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -64,11 +66,19 @@ const EditPlaceToSleep: React.FC = () => {
   }
 
   return (
-    <FormPlaceToSleep
-      method="edit"
-      url={`/places-to-sleep/${id}`}
-      initialData={placeToSleep}
-    />
+    <>
+      <RoomsBar>
+        <ManageRooms to={`/lugares-para-dormir/${id}/quartos`}>
+          <FiHome size={18} />
+          Gerenciar quartos
+        </ManageRooms>
+      </RoomsBar>
+      <FormPlaceToSleep
+        method="edit"
+        url={`/places-to-sleep/${id}`}
+        initialData={placeToSleep}
+      />
+    </>
   );
 };
 
