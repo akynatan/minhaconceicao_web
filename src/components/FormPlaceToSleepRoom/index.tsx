@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useRef, useState } from "react";
-import { FiArrowLeft, FiHome, FiSave } from "react-icons/fi";
+import { FiArrowLeft, FiClock, FiHome, FiSave } from "react-icons/fi";
 import { FormHandles } from "@unform/core";
 import { Form } from "@unform/web";
 import * as Yup from "yup";
@@ -9,6 +9,12 @@ import api from "../../services/api";
 import { useToast } from "../../hooks/toast";
 import getValidationErrors from "../../utils/getValidationErrors";
 import getApiErrorMessage from "../../utils/getApiErrorMessage";
+import {
+  emptyToNull,
+  optionalStayTextSchema,
+  optionalTimeSchema,
+  timeOrNull,
+} from "../../utils/stayInfo";
 import { TagType } from "../../enums/TagType";
 import {
   PlaceToSleepRoomImage,
@@ -16,6 +22,7 @@ import {
 } from "../../types/PlaceToSleepRoom";
 
 import Input from "../Input";
+import InputMask from "../InputMask";
 import Textarea from "../Textarea";
 import MultiSelectTags from "../MultiSelectTags";
 import FileUploadMultiple from "../FileUploadMultiple";
@@ -41,6 +48,10 @@ interface FormPlaceToSleepRoomData {
   position?: string;
   tags?: string[];
   images?: string[];
+  checkInTime?: string;
+  checkOutTime?: string;
+  breakfastInfo?: string;
+  petPolicy?: string;
 }
 
 export interface FormPlaceToSleepRoomInitialData {
@@ -53,6 +64,10 @@ export interface FormPlaceToSleepRoomInitialData {
   tags?: string[];
   images?: PlaceToSleepRoomImage[];
   rules?: PlaceToSleepRoomRuleInput[];
+  checkInTime?: string;
+  checkOutTime?: string;
+  breakfastInfo?: string;
+  petPolicy?: string;
 }
 
 interface FormPlaceToSleepRoomProps {
@@ -93,6 +108,10 @@ const FormPlaceToSleepRoom: React.FC<FormPlaceToSleepRoomProps> = ({
       slug: initialData?.slug || "",
       position: initialData?.position ?? "0",
       tags: initialData?.tags || [],
+      checkInTime: initialData?.checkInTime || "",
+      checkOutTime: initialData?.checkOutTime || "",
+      breakfastInfo: initialData?.breakfastInfo || "",
+      petPolicy: initialData?.petPolicy || "",
     }),
     [initialData]
   );
@@ -144,6 +163,10 @@ const FormPlaceToSleepRoom: React.FC<FormPlaceToSleepRoomProps> = ({
             .min(0, "Posição mínima é 0"),
           tags: Yup.array().of(Yup.string()),
           images: Yup.array().of(Yup.string()),
+          checkInTime: optionalTimeSchema("Check-in"),
+          checkOutTime: optionalTimeSchema("Check-out"),
+          breakfastInfo: optionalStayTextSchema(),
+          petPolicy: optionalStayTextSchema(),
           rules: Yup.array().of(
             Yup.object().shape({
               text: Yup.string().trim().required("Informe o texto da regra"),
@@ -183,6 +206,10 @@ const FormPlaceToSleepRoom: React.FC<FormPlaceToSleepRoomProps> = ({
           rules: RoomRulePayload[];
           position: number;
           slug?: string;
+          checkInTime: string | null;
+          checkOutTime: string | null;
+          breakfastInfo: string | null;
+          petPolicy: string | null;
         } = {
           placeToSleepId,
           name: validated.name,
@@ -197,6 +224,10 @@ const FormPlaceToSleepRoom: React.FC<FormPlaceToSleepRoomProps> = ({
           ),
           rules: rulePayload,
           position: validated.position ?? 0,
+          checkInTime: timeOrNull(data.checkInTime),
+          checkOutTime: timeOrNull(data.checkOutTime),
+          breakfastInfo: emptyToNull(data.breakfastInfo),
+          petPolicy: emptyToNull(data.petPolicy),
         };
 
         if (validated.slug) {
@@ -297,6 +328,46 @@ const FormPlaceToSleepRoom: React.FC<FormPlaceToSleepRoomProps> = ({
         <FormStep>
           <StepNumber>4</StepNumber>
           <StepContent>
+            <StepTitle>Informações da estadia</StepTitle>
+            <p className="hint">
+              Deixe em branco para usar as informações da hospedagem.
+            </p>
+            <div className="form-grid">
+              <InputMask
+                name="checkInTime"
+                mask="99:99"
+                icon={FiClock}
+                placeholder="Check-in (HH:mm)"
+              />
+              <InputMask
+                name="checkOutTime"
+                mask="99:99"
+                icon={FiClock}
+                placeholder="Check-out (HH:mm)"
+              />
+              <div>
+                <span className="field-label">Café da manhã</span>
+                <Input
+                  name="breakfastInfo"
+                  placeholder="Incluso · 7h às 10h"
+                  maxLength={120}
+                />
+              </div>
+              <div>
+                <span className="field-label">Animais</span>
+                <Input
+                  name="petPolicy"
+                  placeholder="Aceita pet de pequeno porte"
+                  maxLength={120}
+                />
+              </div>
+            </div>
+          </StepContent>
+        </FormStep>
+
+        <FormStep>
+          <StepNumber>5</StepNumber>
+          <StepContent>
             <StepTitle>Slug e posição</StepTitle>
             <p className="hint">
               O slug é opcional e único nesta hospedagem. A posição define a
@@ -316,7 +387,7 @@ const FormPlaceToSleepRoom: React.FC<FormPlaceToSleepRoomProps> = ({
         </FormStep>
 
         <FormStep>
-          <StepNumber>5</StepNumber>
+          <StepNumber>6</StepNumber>
           <StepContent>
             <StepTitle>Comodidades</StepTitle>
             <MultiSelectTags
@@ -328,7 +399,7 @@ const FormPlaceToSleepRoom: React.FC<FormPlaceToSleepRoomProps> = ({
         </FormStep>
 
         <FormStep>
-          <StepNumber>6</StepNumber>
+          <StepNumber>7</StepNumber>
           <StepContent>
             <StepTitle>Fotos</StepTitle>
             <p className="hint">
@@ -345,7 +416,7 @@ const FormPlaceToSleepRoom: React.FC<FormPlaceToSleepRoomProps> = ({
         </FormStep>
 
         <FormStep>
-          <StepNumber>7</StepNumber>
+          <StepNumber>8</StepNumber>
           <StepContent>
             <StepTitle>Incluso e regras</StepTitle>
             <PlaceToSleepRoomRules

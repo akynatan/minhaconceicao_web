@@ -6,6 +6,7 @@ import { PlaceToSleep } from "../../types/PlaceToSleep";
 import FormPlaceToSleep from "../../components/FormPlaceToSleep";
 import { useToast } from "../../hooks/toast";
 import { ManageRooms, RoomsBar } from "./styles";
+import { toTimeInput } from "../../utils/stayInfo";
 
 const EditPlaceToSleep: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -31,6 +32,10 @@ const EditPlaceToSleep: React.FC = () => {
               typeof item === "string" ? item : item.tagId
             ) || [],
           images: placeToSleepData.images || [],
+          checkInTime: toTimeInput(placeToSleepData.checkInTime),
+          checkOutTime: toTimeInput(placeToSleepData.checkOutTime),
+          breakfastInfo: placeToSleepData.breakfastInfo || "",
+          petPolicy: placeToSleepData.petPolicy || "",
           schedules:
             placeToSleepData.schedules?.map((schedule: any) => ({
               dayOfWeek: schedule.dayOfWeek,

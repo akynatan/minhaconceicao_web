@@ -91,6 +91,14 @@ export const StepContent = styled.div`
       gap: 0;
     }
   }
+
+  .field-label {
+    display: block;
+    margin: 0 0 8px;
+    color: #333333;
+    font-size: 14px;
+    font-weight: 600;
+  }
 `;
 
 export const FormActions = styled.div`

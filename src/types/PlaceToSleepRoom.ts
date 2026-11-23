@@ -53,6 +53,10 @@ export interface PlaceToSleepRoom {
   images?: PlaceToSleepRoomImage[];
   tags?: PlaceToSleepRoomTag[];
   rules?: PlaceToSleepRoomRule[];
+  checkInTime?: string | null;
+  checkOutTime?: string | null;
+  breakfastInfo?: string | null;
+  petPolicy?: string | null;
   createdAt: string;
   updatedAt: string;
 }

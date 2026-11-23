@@ -8,6 +8,7 @@ import FormPlaceToSleepRoom, {
   FormPlaceToSleepRoomInitialData,
 } from "../../components/FormPlaceToSleepRoom";
 import { PlaceToSleepRoom } from "../../types/PlaceToSleepRoom";
+import { toTimeInput } from "../../utils/stayInfo";
 
 const EditPlaceToSleepRoom: React.FC = () => {
   const { id, roomId } = useParams<{ id: string; roomId: string }>();
@@ -51,6 +52,10 @@ const EditPlaceToSleepRoom: React.FC = () => {
               isAllowed: Boolean(rule.isAllowed),
               icon: rule.icon || "",
             })) || [],
+          checkInTime: toTimeInput(roomData.checkInTime),
+          checkOutTime: toTimeInput(roomData.checkOutTime),
+          breakfastInfo: roomData.breakfastInfo || "",
+          petPolicy: roomData.petPolicy || "",
         });
       } catch (error) {
         addToast({
