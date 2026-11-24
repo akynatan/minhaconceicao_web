@@ -24,6 +24,7 @@ interface FileUploadProps {
     imageUrl: string;
   }) => void;
   onUploadError?: (error: string) => void;
+  onRemove?: () => void;
 }
 
 interface UploadedFileData {
@@ -42,6 +43,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
   existingPhoto,
   onUploadSuccess,
   onUploadError,
+  onRemove,
 }) => {
   const {
     fieldName,
@@ -198,6 +200,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
       URL.revokeObjectURL(uploadedFile.preview);
     }
     setUploadedFile(null);
+    onRemove?.();
   };
 
   const openFileDialog = () => {

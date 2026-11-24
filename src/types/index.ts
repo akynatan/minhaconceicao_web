@@ -13,5 +13,6 @@ export * from "./Job";
 export * from "../enums/CategoryType";
 export * from "./Attraction";
 export * from "./News";
+export * from "./Itinerary";
 export * from "./Event";
 export * from "./Artisan";

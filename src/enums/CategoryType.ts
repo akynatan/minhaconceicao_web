@@ -8,4 +8,5 @@ export enum CategoryType {
   SERVICES = "services",
   JOBS = "jobs",
   ARTISANS = "artisans",
+  ITINERARY = "itinerary",
 }
