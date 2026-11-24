@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { FiHome } from "react-icons/fi";
 import { useParams } from "react-router";
 import api from "../../services/api";
 import { PlaceToSleep } from "../../types/PlaceToSleep";
 import FormPlaceToSleep from "../../components/FormPlaceToSleep";
 import { useToast } from "../../hooks/toast";
+import { ManageRooms, RoomsBar } from "./styles";
+import { toTimeInput } from "../../utils/stayInfo";
 
 const EditPlaceToSleep: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -29,6 +32,10 @@ const EditPlaceToSleep: React.FC = () => {
               typeof item === "string" ? item : item.tagId
             ) || [],
           images: placeToSleepData.images || [],
+          checkInTime: toTimeInput(placeToSleepData.checkInTime),
+          checkOutTime: toTimeInput(placeToSleepData.checkOutTime),
+          breakfastInfo: placeToSleepData.breakfastInfo || "",
+          petPolicy: placeToSleepData.petPolicy || "",
           schedules:
             placeToSleepData.schedules?.map((schedule: any) => ({
               dayOfWeek: schedule.dayOfWeek,
@@ -64,11 +71,19 @@ const EditPlaceToSleep: React.FC = () => {
   }
 
   return (
-    <FormPlaceToSleep
-      method="edit"
-      url={`/places-to-sleep/${id}`}
-      initialData={placeToSleep}
-    />
+    <>
+      <RoomsBar>
+        <ManageRooms to={`/lugares-para-dormir/${id}/quartos`}>
+          <FiHome size={18} />
+          Gerenciar quartos
+        </ManageRooms>
+      </RoomsBar>
+      <FormPlaceToSleep
+        method="edit"
+        url={`/places-to-sleep/${id}`}
+        initialData={placeToSleep}
+      />
+    </>
   );
 };
 

@@ -80,6 +80,10 @@ export interface PlaceToSleep {
   categories: PlaceToSleepCategory[];
   attractions: PlaceToSleepAttraction[];
   schedules: PlaceToSleepSchedule[];
+  checkInTime?: string | null;
+  checkOutTime?: string | null;
+  breakfastInfo?: string | null;
+  petPolicy?: string | null;
   createdAt: Date;
   updatedAt: Date;
   deletedAt?: Date;
@@ -101,6 +105,10 @@ export interface CreatePlaceToSleepData {
   rating?: number;
   averagePrice?: number;
   isActive?: boolean;
+  checkInTime?: string | null;
+  checkOutTime?: string | null;
+  breakfastInfo?: string | null;
+  petPolicy?: string | null;
 }
 
 export interface UpdatePlaceToSleepData extends CreatePlaceToSleepData {

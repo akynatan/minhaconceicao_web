@@ -9,6 +9,7 @@ import {
   FiMessageSquare,
   FiArrowLeft,
   FiSave,
+  FiClock,
 } from "react-icons/fi";
 import { FormHandles } from "@unform/core";
 import { Form } from "@unform/web";
@@ -20,6 +21,12 @@ import api from "../../services/api";
 import { useToast } from "../../hooks/toast";
 
 import getValidationErrors from "../../utils/getValidationErrors";
+import {
+  emptyToNull,
+  optionalStayTextSchema,
+  optionalTimeSchema,
+  timeOrNull,
+} from "../../utils/stayInfo";
 
 import Input from "../Input";
 import InputMask from "../InputMask";
@@ -66,6 +73,10 @@ interface FormPlaceToSleepData {
   photo?: string;
   images: string[];
   schedules: ScheduleData[];
+  checkInTime?: string;
+  checkOutTime?: string;
+  breakfastInfo?: string;
+  petPolicy?: string;
 }
 
 interface FormPlaceToSleepProps {
@@ -176,6 +187,10 @@ const FormPlaceToSleep: React.FC<FormPlaceToSleepProps> = ({
             .min(1, "Selecione pelo menos uma categoria"),
           images: Yup.array(),
           schedules: Yup.array(),
+          checkInTime: optionalTimeSchema("Check-in"),
+          checkOutTime: optionalTimeSchema("Check-out"),
+          breakfastInfo: optionalStayTextSchema(),
+          petPolicy: optionalStayTextSchema(),
         });
 
         await schema.validate(formDataWithSchedules, {
@@ -203,6 +218,10 @@ const FormPlaceToSleep: React.FC<FormPlaceToSleepProps> = ({
           photo: formDataWithSchedules.photo,
           images: formDataWithSchedules.images,
           schedules: formDataWithSchedules.schedules,
+          checkInTime: timeOrNull(formDataWithSchedules.checkInTime),
+          checkOutTime: timeOrNull(formDataWithSchedules.checkOutTime),
+          breakfastInfo: emptyToNull(formDataWithSchedules.breakfastInfo),
+          petPolicy: emptyToNull(formDataWithSchedules.petPolicy),
         };
 
         const methods = {
@@ -358,6 +377,43 @@ const FormPlaceToSleep: React.FC<FormPlaceToSleepProps> = ({
         <FormStep>
           <StepNumber>7</StepNumber>
           <StepContent>
+            <StepTitle>Informações da estadia</StepTitle>
+            <div className="form-grid">
+              <InputMask
+                name="checkInTime"
+                mask="99:99"
+                icon={FiClock}
+                placeholder="Check-in (HH:mm)"
+              />
+              <InputMask
+                name="checkOutTime"
+                mask="99:99"
+                icon={FiClock}
+                placeholder="Check-out (HH:mm)"
+              />
+              <div>
+                <span className="field-label">Café da manhã</span>
+                <Input
+                  name="breakfastInfo"
+                  placeholder="Incluso · 7h às 10h"
+                  maxLength={120}
+                />
+              </div>
+              <div>
+                <span className="field-label">Animais</span>
+                <Input
+                  name="petPolicy"
+                  placeholder="Aceita pet de pequeno porte"
+                  maxLength={120}
+                />
+              </div>
+            </div>
+          </StepContent>
+        </FormStep>
+
+        <FormStep>
+          <StepNumber>8</StepNumber>
+          <StepContent>
             <StepTitle>Tags</StepTitle>
             <MultiSelectTags
               name="tags"
@@ -368,7 +424,7 @@ const FormPlaceToSleep: React.FC<FormPlaceToSleepProps> = ({
         </FormStep>
 
         <FormStep>
-          <StepNumber>8</StepNumber>
+          <StepNumber>9</StepNumber>
           <StepContent>
             <StepTitle>Foto Principal</StepTitle>
             <FileUpload
@@ -389,7 +445,7 @@ const FormPlaceToSleep: React.FC<FormPlaceToSleepProps> = ({
         </FormStep>
 
         <FormStep>
-          <StepNumber>9</StepNumber>
+          <StepNumber>10</StepNumber>
           <StepContent>
             <StepTitle>Horários de Funcionamento</StepTitle>
             <ScheduleForm
@@ -401,7 +457,7 @@ const FormPlaceToSleep: React.FC<FormPlaceToSleepProps> = ({
         </FormStep>
 
         <FormStep>
-          <StepNumber>10</StepNumber>
+          <StepNumber>11</StepNumber>
           <StepContent>
             <StepTitle>Imagens</StepTitle>
             <FileUploadMultiple

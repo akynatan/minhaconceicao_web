@@ -16,6 +16,9 @@ import EditPlaceToEat from "../pages/EditPlaceToEat";
 import PlacesToSleep from "../pages/PlacesToSleep";
 import AddPlaceToSleep from "../pages/AddPlaceToSleep";
 import EditPlaceToSleep from "../pages/EditPlaceToSleep";
+import PlaceToSleepRooms from "../pages/PlaceToSleepRooms";
+import AddPlaceToSleepRoom from "../pages/AddPlaceToSleepRoom";
+import EditPlaceToSleepRoom from "../pages/EditPlaceToSleepRoom";
 import Attractions from "../pages/Attractions";
 import AddAttraction from "../pages/AddAttraction";
 import EditAttraction from "../pages/EditAttraction";
@@ -96,6 +99,30 @@ const RoutesApp: React.FC = () => {
         element={
           <ProtectedRoute user={user}>
             <AddPlaceToSleep />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/lugares-para-dormir/:id/quartos"
+        element={
+          <ProtectedRoute user={user}>
+            <PlaceToSleepRooms />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/lugares-para-dormir/:id/quartos/add"
+        element={
+          <ProtectedRoute user={user}>
+            <AddPlaceToSleepRoom />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/lugares-para-dormir/:id/quartos/:roomId"
+        element={
+          <ProtectedRoute user={user}>
+            <EditPlaceToSleepRoom />
           </ProtectedRoute>
         }
       />

@@ -1,7 +1,13 @@
 import React from "react";
 import { Link } from "react-router";
 import { HiPencil } from "react-icons/hi";
-import { FiMapPin, FiPhone, FiDollarSign, FiStar } from "react-icons/fi";
+import {
+  FiMapPin,
+  FiPhone,
+  FiDollarSign,
+  FiStar,
+  FiHome,
+} from "react-icons/fi";
 import { PlaceToSleep } from "../../types/PlaceToSleep";
 import {
   Card,
@@ -15,6 +21,8 @@ import {
   CategoryBadge,
   StatusSwitch,
   EditButton,
+  RoomsButton,
+  ActionButtons,
   StatusIndicator,
 } from "./styles";
 
@@ -110,10 +118,19 @@ const PlaceToSleepCard: React.FC<PlaceToSleepCardProps> = ({
           <span>Ativo</span>
         </StatusSwitch>
 
-        <EditButton as={Link} to={`/lugares-para-dormir/${place.id}`}>
-          <HiPencil size={18} />
-          Editar
-        </EditButton>
+        <ActionButtons>
+          <RoomsButton
+            as={Link}
+            to={`/lugares-para-dormir/${place.id}/quartos`}
+          >
+            <FiHome size={18} />
+            Quartos
+          </RoomsButton>
+          <EditButton as={Link} to={`/lugares-para-dormir/${place.id}`}>
+            <HiPencil size={18} />
+            Editar
+          </EditButton>
+        </ActionButtons>
       </CardActions>
     </Card>
   );
