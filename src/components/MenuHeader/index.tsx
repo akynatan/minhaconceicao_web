@@ -12,6 +12,7 @@ import {
   FiBookOpen,
   FiCalendar,
   FiTool,
+  FiMap,
 } from "react-icons/fi";
 
 import logoImg from "../../assets/logo.png";
@@ -100,6 +101,13 @@ const MenuHeader: React.FC = () => {
           >
             <FiBookOpen />
             <span>Notícias</span>
+          </MenuItem>
+          <MenuItem
+            to="/roteiros"
+            className={isActiveRoute("/roteiros") ? "active" : ""}
+          >
+            <FiMap />
+            <span>Roteiros</span>
           </MenuItem>
           <MenuItem
             to="/eventos"

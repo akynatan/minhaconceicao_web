@@ -37,6 +37,9 @@ import EditJob from "../pages/EditJob";
 import NewsPage from "../pages/News";
 import AddNews from "../pages/AddNews";
 import EditNews from "../pages/EditNews";
+import Itineraries from "../pages/Itineraries";
+import AddItinerary from "../pages/AddItinerary";
+import EditItinerary from "../pages/EditItinerary";
 import Events from "../pages/Events";
 import AddEvent from "../pages/AddEvent";
 import EditEvent from "../pages/EditEvent";
@@ -275,6 +278,30 @@ const RoutesApp: React.FC = () => {
         element={
           <ProtectedRoute user={user}>
             <EditNews />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/roteiros"
+        element={
+          <ProtectedRoute user={user}>
+            <Itineraries />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/roteiros/novo"
+        element={
+          <ProtectedRoute user={user}>
+            <AddItinerary />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/roteiros/:id"
+        element={
+          <ProtectedRoute user={user}>
+            <EditItinerary />
           </ProtectedRoute>
         }
       />
