@@ -40,6 +40,9 @@ import EditNews from "../pages/EditNews";
 import Itineraries from "../pages/Itineraries";
 import AddItinerary from "../pages/AddItinerary";
 import EditItinerary from "../pages/EditItinerary";
+import LegalDocuments from "../pages/LegalDocuments";
+import AddLegalDocument from "../pages/AddLegalDocument";
+import EditLegalDocument from "../pages/EditLegalDocument";
 import Events from "../pages/Events";
 import AddEvent from "../pages/AddEvent";
 import EditEvent from "../pages/EditEvent";
@@ -302,6 +305,30 @@ const RoutesApp: React.FC = () => {
         element={
           <ProtectedRoute user={user}>
             <EditItinerary />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/documentos-legais"
+        element={
+          <ProtectedRoute user={user}>
+            <LegalDocuments />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/documentos-legais/novo"
+        element={
+          <ProtectedRoute user={user}>
+            <AddLegalDocument />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/documentos-legais/:id"
+        element={
+          <ProtectedRoute user={user}>
+            <EditLegalDocument />
           </ProtectedRoute>
         }
       />

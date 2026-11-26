@@ -13,6 +13,7 @@ import {
   FiCalendar,
   FiTool,
   FiMap,
+  FiShield,
 } from "react-icons/fi";
 
 import logoImg from "../../assets/logo.png";
@@ -129,6 +130,13 @@ const MenuHeader: React.FC = () => {
           >
             <FiFileText />
             <span>Vagas de Emprego</span>
+          </MenuItem>
+          <MenuItem
+            to="/documentos-legais"
+            className={isActiveRoute("/documentos-legais") ? "active" : ""}
+          >
+            <FiShield />
+            <span>Documentos legais</span>
           </MenuItem>
           {user?.role === "admin" && (
             <MenuItem
