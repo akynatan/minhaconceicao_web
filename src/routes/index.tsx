@@ -46,6 +46,12 @@ import EditEvent from "../pages/EditEvent";
 import Artisans from "../pages/Artisans";
 import AddArtisan from "../pages/AddArtisan";
 import EditArtisan from "../pages/EditArtisan";
+import Categories from "../pages/Categories";
+import AddCategory from "../pages/AddCategory";
+import EditCategory from "../pages/EditCategory";
+import Tags from "../pages/Tags";
+import AddTag from "../pages/AddTag";
+import EditTag from "../pages/EditTag";
 import TermsOfUse from "../pages/TermsOfUse";
 import PrivacyPolicy from "../pages/PrivacyPolicy";
 
@@ -350,6 +356,54 @@ const RoutesApp: React.FC = () => {
         element={
           <ProtectedRoute user={user}>
             <EditArtisan />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/categorias"
+        element={
+          <ProtectedRoute user={user}>
+            <Categories />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/categorias/nova"
+        element={
+          <ProtectedRoute user={user}>
+            <AddCategory />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/categorias/:id"
+        element={
+          <ProtectedRoute user={user}>
+            <EditCategory />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/tags"
+        element={
+          <ProtectedRoute user={user}>
+            <Tags />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/tags/nova"
+        element={
+          <ProtectedRoute user={user}>
+            <AddTag />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/tags/:id"
+        element={
+          <ProtectedRoute user={user}>
+            <EditTag />
           </ProtectedRoute>
         }
       />
