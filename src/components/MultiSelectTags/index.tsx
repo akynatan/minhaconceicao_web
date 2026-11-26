@@ -27,7 +27,8 @@ const MultiSelectTags: React.FC<MultiSelectTagsProps> = ({
   placeholder = "Selecione as tags",
   tagType = TagType.PLACE_TO_EAT,
 }) => {
-  const { fieldName, defaultValue = [], error, registerField } = useField(name);
+  const { fieldName, defaultValue = [], error, registerField, clearError } =
+    useField(name);
   const { addToast } = useToast();
 
   const [tags, setTags] = useState<Tag[]>([]);
@@ -87,10 +88,12 @@ const MultiSelectTags: React.FC<MultiSelectTagsProps> = ({
       : [...selectedTags, tagId];
 
     setSelectedTags(newSelected);
+    clearError();
   };
 
   const handleRemoveTag = (tagId: string) => {
     setSelectedTags((prev) => prev.filter((id) => id !== tagId));
+    clearError();
   };
 
   const getSelectedTagNames = () => {

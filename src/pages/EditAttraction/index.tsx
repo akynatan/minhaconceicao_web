@@ -4,7 +4,8 @@ import { useParams } from "react-router";
 import FormAttraction from "../../components/FormAttraction";
 import GoBack from "../../components/GoBack";
 import api from "../../services/api";
-import { Attraction } from "../../types/Attraction";
+import { AttractionFormData } from "../../types/Attraction";
+import { attractionFormCategoryIds } from "../../utils/attractionCategories";
 import { useToast } from "../../hooks/toast";
 
 import { Container, Content, ContentPage } from "./styles";
@@ -12,7 +13,7 @@ import { Container, Content, ContentPage } from "./styles";
 const EditAttraction: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { addToast } = useToast();
-  const [attraction, setAttraction] = useState<Attraction | null>(null);
+  const [attraction, setAttraction] = useState<AttractionFormData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -45,6 +46,7 @@ const EditAttraction: React.FC = () => {
 
           const mappedData = {
             ...attractionData,
+            categories: attractionFormCategoryIds(attractionData),
             tags:
               attractionData.tags?.map((item: any) =>
                 typeof item === "string" ? item : item.tagId

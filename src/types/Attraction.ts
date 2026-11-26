@@ -29,6 +29,13 @@ export interface AttractionCategory {
   updatedAt: Date;
 }
 
+export interface AttractionCategoryRelation {
+  id: string;
+  attractionId?: string;
+  categoryId: string;
+  category?: Category;
+}
+
 export interface AttractionSchedule {
   id: string;
   attractionId: string;
@@ -61,9 +68,16 @@ export interface Attraction {
   schedules: AttractionSchedule[];
   categoryId: string;
   category: Category;
+  categories?: AttractionCategoryRelation[];
   createdAt: Date;
   updatedAt: Date;
   deletedAt?: Date;
+}
+
+export interface AttractionFormData
+  extends Omit<Attraction, "categories" | "tags"> {
+  categories?: string[];
+  tags?: string[];
 }
 
 export interface CreateAttractionData {
@@ -77,7 +91,7 @@ export interface CreateAttractionData {
   howToArrive: string;
   elevationGain?: number | null;
   tags?: string[];
-  categoryId: string;
+  categoryIds: string[];
 }
 
 export interface UpdateAttractionData extends CreateAttractionData {

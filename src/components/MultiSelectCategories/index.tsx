@@ -27,7 +27,8 @@ const MultiSelectCategories: React.FC<MultiSelectCategoriesProps> = ({
   placeholder = "Selecione as categorias",
   categoryType = CategoryType.PLACE_TO_EAT,
 }) => {
-  const { fieldName, defaultValue = [], error, registerField } = useField(name);
+  const { fieldName, defaultValue = [], error, registerField, clearError } =
+    useField(name);
   const { addToast } = useToast();
 
   const [categories, setCategories] = useState<Category[]>([]);
@@ -88,16 +89,25 @@ const MultiSelectCategories: React.FC<MultiSelectCategoriesProps> = ({
       : [...selectedCategories, categoryId];
 
     setSelectedCategories(newSelected);
+    if (newSelected.length > 0) {
+      clearError();
+    }
   };
 
   const handleRemoveCategory = (categoryId: string) => {
-    setSelectedCategories((prev) => prev.filter((id) => id !== categoryId));
+    setSelectedCategories((prev) => {
+      const next = prev.filter((id) => id !== categoryId);
+      if (next.length > 0) {
+        clearError();
+      }
+      return next;
+    });
   };
 
-  const getSelectedCategoryNames = () => {
-    return categories
-      .filter((cat) => selectedCategories.includes(cat.id))
-      .map((cat) => cat.name);
+  const getSelectedCategoryItems = () => {
+    return selectedCategories
+      .map((id) => categories.find((category) => category.id === id))
+      .filter((category): category is Category => !!category);
   };
 
   const getAvailableCategories = () => {
@@ -121,12 +131,12 @@ const MultiSelectCategories: React.FC<MultiSelectCategoriesProps> = ({
 
       {selectedCategories.length > 0 && (
         <SelectedItems>
-          {getSelectedCategoryNames().map((name, index) => (
-            <SelectedItem key={selectedCategories[index]}>
-              <span>{name}</span>
+          {getSelectedCategoryItems().map((category) => (
+            <SelectedItem key={category.id}>
+              <span>{category.name}</span>
               <button
                 type="button"
-                onClick={() => handleRemoveCategory(selectedCategories[index])}
+                onClick={() => handleRemoveCategory(category.id)}
               >
                 <FiX size={14} />
               </button>

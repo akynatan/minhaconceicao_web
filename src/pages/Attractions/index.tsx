@@ -19,6 +19,7 @@ import { CategoryType } from "../../enums/CategoryType";
 import Button from "../../components/Button";
 import AttractionCard from "../../components/AttractionCard";
 import { useToast } from "../../hooks/toast";
+import { attractionMatchesCategory } from "../../utils/attractionCategories";
 
 const Attractions: React.FC = () => {
   const [isFetching, setIsFetching] = useState(true);
@@ -104,8 +105,8 @@ const Attractions: React.FC = () => {
 
     // Filtro por categoria
     if (selectedCategory) {
-      filtered = filtered.filter(
-        (attraction) => attraction.categoryId === selectedCategory
+      filtered = filtered.filter((attraction) =>
+        attractionMatchesCategory(attraction, selectedCategory)
       );
     }
 
