@@ -13,6 +13,8 @@ import {
   FiCalendar,
   FiTool,
   FiMap,
+  FiGrid,
+  FiTag,
 } from "react-icons/fi";
 
 import logoImg from "../../assets/logo.png";
@@ -129,6 +131,20 @@ const MenuHeader: React.FC = () => {
           >
             <FiFileText />
             <span>Vagas de Emprego</span>
+          </MenuItem>
+          <MenuItem
+            to="/categorias"
+            className={isActiveRoute("/categorias") ? "active" : ""}
+          >
+            <FiGrid />
+            <span>Categorias</span>
+          </MenuItem>
+          <MenuItem
+            to="/tags"
+            className={isActiveRoute("/tags") ? "active" : ""}
+          >
+            <FiTag />
+            <span>Tags</span>
           </MenuItem>
           {user?.role === "admin" && (
             <MenuItem
