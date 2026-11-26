@@ -14,6 +14,7 @@ import Select from "../Select";
 import ColorField from "../ColorField";
 import IconField from "../IconField";
 import { TagType, tagTypeOptions } from "../../enums/TagType";
+import { isLucideNativeIcon } from "../../utils/lucideNativeIcons";
 
 import {
   Container,
@@ -47,7 +48,14 @@ const SECONDARY = "#E6F4EE";
 
 const schema = Yup.object().shape({
   name: Yup.string().trim().required("Nome obrigatório"),
-  icon: Yup.string().trim().required("Ícone obrigatório"),
+  icon: Yup.string()
+    .trim()
+    .required("Ícone obrigatório")
+    .test(
+      "native-lucide",
+      "Escolha um ícone Lucide que existe no aplicativo",
+      (value) => isLucideNativeIcon(value)
+    ),
   type: Yup.string()
     .oneOf(Object.values(TagType), "Tipo inválido")
     .required("Tipo obrigatório"),
@@ -147,7 +155,12 @@ const FormTag: React.FC<FormTagProps> = ({
             <StepTitle>Identificação</StepTitle>
             <Input name="name" icon={FiType} placeholder="Nome da tag" />
             <div className="form-grid">
-              <Select name="type" placeholder="Tipo" options={tagTypeOptions} />
+              <Select
+                name="type"
+                placeholder="Tipo"
+                options={tagTypeOptions}
+                isDisabled={method === "edit"}
+              />
               <Input
                 name="weight"
                 type="number"
@@ -157,10 +170,15 @@ const FormTag: React.FC<FormTagProps> = ({
                 placeholder="Peso (maior aparece primeiro)"
               />
             </div>
-            {recordKey && (
+            {method === "edit" && (
               <p>
-                Chave <code>{recordKey}</code>. A API gera a chave a partir do
-                nome na criação. Esta tela não altera a chave.
+                O tipo não pode ser alterado.
+                {recordKey ? (
+                  <>
+                    {" "}
+                    Chave <code>{recordKey}</code>.
+                  </>
+                ) : null}
               </p>
             )}
           </StepContent>

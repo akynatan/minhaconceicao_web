@@ -1,3 +1,8 @@
+import {
+  isLucideNativeDeclaredIcon,
+  isLucideNativeIcon,
+} from "./lucideNativeIcons";
+
 const KEBAB = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 export interface LucideIconOption {
@@ -45,7 +50,7 @@ export function toLucideKebab(
   return null;
 }
 
-export function canonicalIconOptions(
+export function appIconOptions(
   names: readonly string[],
   sourceOf: (name: string) => string
 ): LucideIconOption[] {
@@ -67,15 +72,35 @@ export function canonicalIconOptions(
   }
 
   const options: LucideIconOption[] = [];
+  const seen = new Set<string>();
 
   for (const [chunk, group] of groups) {
     const file = chunk.split("/").pop() ?? chunk;
-    const matches = group.filter(
-      (name) => file.startsWith(`${name}-`) || file.startsWith(`${name}.`)
+    const candidates = group
+      .map((kebab) => ({ kebab, pascal: kebabToPascal(kebab) }))
+      .filter((item) => isLucideNativeIcon(item.pascal));
+
+    if (candidates.length === 0) {
+      continue;
+    }
+
+    const declared = candidates.filter((item) =>
+      isLucideNativeDeclaredIcon(item.pascal)
     );
-    matches.sort((left, right) => right.length - left.length);
-    const kebab = matches[0] ?? group[0];
-    options.push({ kebab, pascal: kebabToPascal(kebab) });
+    const pool = declared.length > 0 ? declared : candidates;
+    const matched = pool.filter(
+      (item) =>
+        file.startsWith(`${item.kebab}-`) || file.startsWith(`${item.kebab}.`)
+    );
+    matched.sort((left, right) => right.kebab.length - left.kebab.length);
+    const chosen = matched[0] ?? pool[0];
+
+    if (seen.has(chosen.pascal)) {
+      continue;
+    }
+
+    seen.add(chosen.pascal);
+    options.push(chosen);
   }
 
   options.sort((left, right) => left.pascal.localeCompare(right.pascal, "en"));
@@ -89,7 +114,7 @@ export function loadLucideCatalog(): Promise<LucideCatalog> {
     catalogPromise = import("lucide-react/dynamic").then(
       ({ iconNames, dynamicIconImports }) => ({
         known: new Set<string>(iconNames),
-        options: canonicalIconOptions(iconNames, (name) =>
+        options: appIconOptions(iconNames, (name) =>
           dynamicIconImports[name as keyof typeof dynamicIconImports].toString()
         ),
       })

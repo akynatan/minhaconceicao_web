@@ -10,6 +10,7 @@ import { createPortal } from "react-dom";
 import { useField } from "@unform/core";
 
 import { loadLucideCatalog, toLucideKebab } from "../../utils/lucideIcons";
+import { isLucideNativeIcon } from "../../utils/lucideNativeIcons";
 import LucideIcon from "../LucideIcon";
 
 import {
@@ -43,6 +44,7 @@ const IconField: React.FC<IconFieldProps> = ({
   const [value, setValue] = useState(defaultValue || "");
   const [open, setOpen] = useState(false);
   const [recognized, setRecognized] = useState<boolean | null>(null);
+  const [compatible, setCompatible] = useState<boolean | null>(null);
   const valueRef = useRef(value);
   valueRef.current = value;
 
@@ -63,8 +65,12 @@ const IconField: React.FC<IconFieldProps> = ({
 
     if (!value) {
       setRecognized(null);
+      setCompatible(null);
       return;
     }
+
+    const native = isLucideNativeIcon(value.trim());
+    setCompatible(native);
 
     if (!kebab) {
       setRecognized(false);
@@ -112,9 +118,16 @@ const IconField: React.FC<IconFieldProps> = ({
         </ChooseButton>
       </Row>
       <Hint>
-        Padrão Lucide em PascalCase, como Pizza ou UtensilsCrossed.
+        Nome Lucide em PascalCase que existe no aplicativo, como Pizza ou
+        UtensilsCrossed.
       </Hint>
-      {recognized === false && (
+      {compatible === false && (
+        <Warning>
+          Este ícone não existe no aplicativo. Escolha outro para o app
+          conseguir desenhar.
+        </Warning>
+      )}
+      {compatible !== false && recognized === false && (
         <Warning>
           Este valor não é um ícone Lucide. Escolha um novo para o aplicativo
           desenhar o ícone.

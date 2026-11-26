@@ -6,6 +6,7 @@ import { HiPencil } from "react-icons/hi";
 import api from "../../services/api";
 import { useToast } from "../../hooks/toast";
 import getApiErrorMessage from "../../utils/getApiErrorMessage";
+import { taxonomyDeleteError } from "../../utils/taxonomyDeleteError";
 import asArray from "../../utils/asArray";
 import Button from "../../components/Button";
 import LucideIcon from "../../components/LucideIcon";
@@ -81,10 +82,11 @@ const Tags: React.FC = () => {
           description: "Tag excluída com sucesso",
         });
       } catch (error) {
+        const failure = taxonomyDeleteError(error, "tag");
         addToast({
           type: "error",
-          title: "Erro ao excluir",
-          description: getApiErrorMessage(error, "Erro ao excluir a tag"),
+          title: failure.title,
+          description: failure.description,
         });
       }
     },

@@ -18,6 +18,7 @@ import {
   CategoryType,
   categoryTypeOptions,
 } from "../../enums/CategoryType";
+import { isLucideNativeIcon } from "../../utils/lucideNativeIcons";
 
 import {
   Container,
@@ -52,8 +53,15 @@ const SECONDARY = "#E6F4EE";
 
 const schema = Yup.object().shape({
   name: Yup.string().trim().required("Nome obrigatório"),
-  description: Yup.string().trim().required("Descrição obrigatória"),
-  icon: Yup.string().trim().required("Ícone obrigatório"),
+  description: Yup.string().trim(),
+  icon: Yup.string()
+    .trim()
+    .required("Ícone obrigatório")
+    .test(
+      "native-lucide",
+      "Escolha um ícone Lucide que existe no aplicativo",
+      (value) => isLucideNativeIcon(value)
+    ),
   type: Yup.string()
     .oneOf(Object.values(CategoryType), "Tipo inválido")
     .required("Tipo obrigatório"),
@@ -99,9 +107,10 @@ const FormCategory: React.FC<FormCategoryProps> = ({
       try {
         const validated = await schema.validate(data, { abortEarly: false });
 
+        const description = validated.description?.trim() ?? "";
         const payload = {
           name: validated.name.trim(),
-          description: validated.description.trim(),
+          description: description || null,
           icon: validated.icon.trim(),
           type: validated.type,
           colorPrimary: validated.colorPrimary.trim().toUpperCase(),
@@ -158,6 +167,7 @@ const FormCategory: React.FC<FormCategoryProps> = ({
                 name="type"
                 placeholder="Tipo"
                 options={categoryTypeOptions}
+                isDisabled={method === "edit"}
               />
               <Input
                 name="weight"
@@ -170,13 +180,18 @@ const FormCategory: React.FC<FormCategoryProps> = ({
             </div>
             <Textarea
               name="description"
-              placeholder="Descrição da categoria"
+              placeholder="Descrição (opcional)"
               rows={4}
             />
-            {recordKey && (
+            {method === "edit" && (
               <p>
-                Chave <code>{recordKey}</code>. A API gera a chave a partir do
-                nome na criação. Esta tela não altera a chave.
+                O tipo não pode ser alterado.
+                {recordKey ? (
+                  <>
+                    {" "}
+                    Chave <code>{recordKey}</code>.
+                  </>
+                ) : null}
               </p>
             )}
           </StepContent>
