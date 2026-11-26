@@ -21,6 +21,7 @@ import Select from "../Select";
 import FileUpload from "../FileUpload";
 import FileUploadMultiple from "../FileUploadMultiple";
 import ScheduleForm, { ScheduleData } from "../ScheduleForm";
+import MultiSelectCategories from "../MultiSelectCategories";
 import MultiSelectTags from "../MultiSelectTags";
 import { CategoryType } from "../../enums/CategoryType";
 import { TagType } from "../../enums/TagType";
@@ -35,7 +36,7 @@ import {
   BackButton,
   SaveButton,
 } from "./styles";
-import { Attraction } from "../../types/Attraction";
+import { AttractionFormData } from "../../types/Attraction";
 import { DIFICULTY_OPTIONS } from "../../enums/Dificulty";
 
 interface FormAttractionData {
@@ -49,7 +50,7 @@ interface FormAttractionData {
   howToArrive: string;
   elevationGain?: number | "";
   tags?: string[];
-  categoryId: string;
+  categories?: string[];
   photo?: string;
   stampImage?: string | null;
   images: string[];
@@ -57,7 +58,7 @@ interface FormAttractionData {
 }
 
 interface FormAttractionProps {
-  initialData?: Attraction;
+  initialData?: AttractionFormData;
   method: "edit" | "add";
   url: string;
 }
@@ -148,7 +149,9 @@ const FormAttraction: React.FC<FormAttractionProps> = ({
             .nullable()
             .positive("Elevação deve ser positiva"),
           tags: Yup.array().of(Yup.string()),
-          categoryId: Yup.string().required("Categoria obrigatória"),
+          categories: Yup.array()
+            .of(Yup.string())
+            .min(1, "Selecione pelo menos uma categoria"),
           photo: Yup.string(),
           stampImage: Yup.string().nullable(),
           images: Yup.array(),
@@ -174,7 +177,7 @@ const FormAttraction: React.FC<FormAttractionProps> = ({
           howToArrive: formDataWithSchedules.howToArrive,
           elevationGain: emptyToNull(formDataWithSchedules.elevationGain),
           tags: formDataWithSchedules.tags || [],
-          categoryId: formDataWithSchedules.categoryId,
+          categoryIds: formDataWithSchedules.categories || [],
           photo: formDataWithSchedules.photo,
           stampImage:
             method === "edit"
@@ -219,29 +222,6 @@ const FormAttraction: React.FC<FormAttractionProps> = ({
     [addToast, url, method, navigate, schedules]
   );
 
-  const [categories, setCategories] = useState<
-    { value: string; label: string }[]
-  >([]);
-
-  useEffect(() => {
-    api
-      .get(`/category?type=${CategoryType.ATTRACTIONS}`)
-      .then((res) => {
-        const categoryOptions = res.data.map((category: any) => ({
-          value: category.id,
-          label: category.name,
-        }));
-        setCategories(categoryOptions);
-      })
-      .catch(() => {
-        addToast({
-          type: "error",
-          title: "Erro ao carregar",
-          description: "Erro ao carregar categorias",
-        });
-      });
-  }, [addToast]);
-
   return (
     <Container>
       <Form
@@ -268,11 +248,11 @@ const FormAttraction: React.FC<FormAttractionProps> = ({
         <FormStep>
           <StepNumber>2</StepNumber>
           <StepContent>
-            <StepTitle>Categoria</StepTitle>
-            <Select
-              name="categoryId"
-              options={categories}
-              placeholder="Selecione a categoria da atração"
+            <StepTitle>Categorias</StepTitle>
+            <MultiSelectCategories
+              name="categories"
+              placeholder="Selecione as categorias da atração"
+              categoryType={CategoryType.ATTRACTIONS}
             />
           </StepContent>
         </FormStep>

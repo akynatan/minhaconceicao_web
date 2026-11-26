@@ -93,6 +93,7 @@ export const InfoItem = styled.div`
 
 export const CategoryInfo = styled.div`
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 8px;
   margin-top: 12px;

@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import { HiPencil } from "react-icons/hi";
 import { FiClock, FiMapPin, FiTrendingUp, FiNavigation } from "react-icons/fi";
 import { Attraction } from "../../types/Attraction";
+import { attractionCategoryLabels } from "../../utils/attractionCategories";
 import {
   Card,
   CardHeader,
@@ -69,6 +70,7 @@ const AttractionCard: React.FC<AttractionCardProps> = ({
   const difficultyLabel = getDifficultyLabel(attraction.difficulty);
   const estimatedTimeLabel = formatTime(attraction.estimatedTime);
   const distanceLabel = formatDistance(attraction.distance);
+  const categories = attractionCategoryLabels(attraction);
 
   return (
     <Card>
@@ -115,9 +117,11 @@ const AttractionCard: React.FC<AttractionCardProps> = ({
           </InfoItem>
         </AttractionInfo>
 
-        {attraction.category && (
+        {categories.length > 0 && (
           <CategoryInfo>
-            <span>{attraction.category.name}</span>
+            {categories.map((category) => (
+              <span key={category.id}>{category.name}</span>
+            ))}
           </CategoryInfo>
         )}
 
